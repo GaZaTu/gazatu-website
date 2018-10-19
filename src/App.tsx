@@ -1,5 +1,5 @@
 import * as React from "react";
-import { HashRouter } from "react-router-dom";
+import { HashRouter, Switch, Route } from "react-router-dom";
 import { hot } from "react-hot-loader";
 import "./App.scss";
 import AppNavItemLink from "./components/AppNavItemLink";
@@ -55,7 +55,15 @@ class App extends React.Component<Props, State> {
           </div>
           <a className="off-canvas-overlay" onClick={this.toggleSidebar} />
           <div className="app-content off-canvas-content">
-            <LazyRoute exact path="/trivia/questions" provider={() => import("./views/TriviaQuestionsView")} />
+            <Switch>
+              <LazyRoute exact path="/trivia/questions" provider={() => import("./views/TriviaQuestionsView")} />
+              <Route component={() => (
+                <div className="empty" style={{ background: "unset" }}>
+                  <p className="empty-title h5">404 - eShrug</p>
+                  <p className="empty-subtitle">Page not found</p>
+                </div>
+              )} />
+            </Switch>
           </div>
         </div>
       </HashRouter>

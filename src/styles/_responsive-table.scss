@@ -228,7 +228,7 @@ table.responsive-table {
       width: 100%;
       display: table;
       // Accessibility (element is not visible, but screen readers read it normally)
-      thead, th {
+      thead:not(.keep-on-mobile), thead:not(.keep-on-mobile) th {
         border: 0;
         height: 1px;
         width: 1px;
@@ -244,7 +244,7 @@ table.responsive-table {
         border: 0;
         display: table-row-group;
       }
-      tr {
+      tbody tr, thead:not(.keep-on-mobile) tr {
         display: block;
         border: $__1px solid var(#{$table-border-color-var});
         border-radius: var(#{$universal-border-radius-var});
