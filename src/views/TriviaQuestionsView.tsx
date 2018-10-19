@@ -1,7 +1,7 @@
 import * as React from "react";
 import { hot } from "react-hot-loader";
 import DankTable, { DankColumn } from "../components/DankTable";
-import { IdType } from "../utils";
+import { IdType, api } from "../utils";
 
 export interface QuestionData {
   id: IdType
@@ -28,24 +28,9 @@ class TriviaQuestionsView extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    // fetch("https://api.gazatu.win/trivia/questions?shuffled=false")
-    //   .then(res => res.json())
-    //   .then(questions => this.setState({ questions }))
-    
-    const questions = [] as any[]
-
-    for (let i = 0; i < 1010; i++) {
-      questions.push({
-        id: i,
-        category: `category${i}`,
-        question: `question${i} bla bla xdd `,
-        hint1: i % 3 === 0 ? `hint1${i}` : null,
-        hint2: i % 6 === 0 ? `hint2${i}` : null,
-        submitter: i % 4 === 0 ? `submitter${i}` : null,
-      })
-    }
-
-    this.setState({ questions })
+    api.get("https://api.gazatu.win/trivia/questions?shuffled=false")
+      .then(res => res.data)
+      .then(questions => this.setState({ questions }))
   }
 
   render() {

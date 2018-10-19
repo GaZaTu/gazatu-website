@@ -64,6 +64,9 @@ class App extends React.Component<Props, State> {
                 </div>
               )} />
             </Switch>
+            {/* <div style={{ bottom: 0, position: "fixed" }}>
+              <p>Test Footer</p>
+            </div> */}
           </div>
         </div>
       </HashRouter>
