@@ -1,9 +1,12 @@
 import * as React from "react";
 import { hot } from "react-hot-loader";
 import DankTable, { DankColumn } from "../components/DankTable";
-import { QuestionData, triviaApi } from "../models/trivia.model";
+import { QuestionData, triviaApi } from "../api/trivia.api";
+import { RouteComponentProps } from "react-router";
 
-interface Props { }
+interface RouteParams { }
+
+type Props = RouteComponentProps<RouteParams>
 
 interface State {
   questions: QuestionData[]

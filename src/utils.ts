@@ -1,21 +1,59 @@
 import Axios from "axios";
 import { observable, observe, computed } from "mobx";
+import { AuthResult, UserData } from "./api/auth.api";
+import * as idbKeyval from "idb-keyval";
 
 class Authorization {
+  static idbKeyvalKey = "AuthResult"
+
   @observable
-  token = ""
+  token?: string
+  @observable
+  user?: UserData
+
+  constructor() {
+    idbKeyval.get<AuthResult>(Authorization.idbKeyvalKey).then(res => {
+      if (res) {
+        this.login(res)
+      }
+    })
+  }
 
   @computed
   get isLoggedIn() {
     return !!this.token
   }
 
-  login(auth: any) {
+  hasPermission(...needs: string[]) {
+    if (!this.user) {
+      return false
+    }
+
+    const permissions = this.user.permissions.map(perm => perm.name)
+
+    if (!this.user.isMaster) {
+      for (const permission of needs) {
+        if (!permissions.includes(permission)) {
+          return false
+        }
+      }
+    }
+
+    return true
+  }
+
+  login(auth: AuthResult) {
     this.token = auth.token
+    this.user = auth.user
+
+    idbKeyval.set(Authorization.idbKeyvalKey, auth)
   }
 
   logout() {
-    this.token = ""
+    this.token = undefined
+    this.user = undefined
+
+    idbKeyval.del(Authorization.idbKeyvalKey)
   }
 }
 
@@ -52,7 +90,7 @@ type Queryfy<T> = {
   [P in keyof T]?: T[P] | string
 }
 
-export class EndpointGroup<TData, TQuery = TData | { [key: string]: any }> {
+export class ApiEndpointGroup<TData, TQuery = TData | { [key: string]: any }> {
   path: string
   
   constructor(path: string) {

@@ -6,6 +6,9 @@ import AppNavItemLink from "./components/AppNavItemLink";
 import AppNavItemList from "./components/AppNavItemList";
 import LazyRoute from "./components/LazyRoute";
 import "./register-service-worker";
+import { authorization } from "./utils";
+import ToastContainer from "./components/ToastContainer";
+import { observer } from 'mobx-react';
 
 interface Props { }
 
@@ -13,6 +16,7 @@ interface State {
   sidebarActive: boolean
 }
 
+@observer
 class App extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
@@ -51,7 +55,7 @@ class App extends React.Component<Props, State> {
                   <AppNavItemLink to="/trivia/questions/new">Submit</AppNavItemLink>
                   <AppNavItemLink to="/trivia/questions">Questions</AppNavItemLink>
                 </AppNavItemList>
-                {/* TODO: Authorization */}
+                <AppNavItemLink to={authorization.isLoggedIn ? "/logout" : "/login"}>{authorization.isLoggedIn ? "Logout" : "Login"}</AppNavItemLink>
               </ul>
             </div>
           </div>
@@ -60,8 +64,7 @@ class App extends React.Component<Props, State> {
             <Switch>
               <LazyRoute exact path="/trivia/questions" provider={() => import("./views/TriviaQuestionsView")} />
               <LazyRoute exact path="/trivia/questions/:id" provider={() => import("./views/TriviaQuestionsIdView")} />
-              <LazyRoute exact path="/login" provider={() => import("./views/AuthorizationView")} />
-              <LazyRoute exact path="/logout" provider={() => import("./views/AuthorizationView")} />
+              <LazyRoute exact path={authorization.isLoggedIn ? "/logout" : "/login"} provider={() => import("./views/AuthorizationView")} />
               <Route component={() => (
                 <div className="empty" style={{ background: "unset" }}>
                   <p className="empty-title h5">404 - eShrug</p>
@@ -69,6 +72,7 @@ class App extends React.Component<Props, State> {
                 </div>
               )} />
             </Switch>
+            <ToastContainer />
             {/* <div style={{ bottom: 0, position: "fixed" }}>
               <p>Test Footer</p>
             </div> */}
