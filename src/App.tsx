@@ -47,9 +47,11 @@ class App extends React.Component<Props, State> {
             <div className="app-nav">
               <ul className="nav">
                 <AppNavItemLink to="/">Start</AppNavItemLink>
-                <AppNavItemList title="Trivia">
+                <AppNavItemList title="Trivia" matchStartsWith="/trivia">
+                  <AppNavItemLink to="/trivia/questions/new">Submit</AppNavItemLink>
                   <AppNavItemLink to="/trivia/questions">Questions</AppNavItemLink>
                 </AppNavItemList>
+                {/* TODO: Authorization */}
               </ul>
             </div>
           </div>
@@ -57,6 +59,9 @@ class App extends React.Component<Props, State> {
           <div className="app-content off-canvas-content">
             <Switch>
               <LazyRoute exact path="/trivia/questions" provider={() => import("./views/TriviaQuestionsView")} />
+              <LazyRoute exact path="/trivia/questions/:id" provider={() => import("./views/TriviaQuestionsIdView")} />
+              <LazyRoute exact path="/login" provider={() => import("./views/AuthorizationView")} />
+              <LazyRoute exact path="/logout" provider={() => import("./views/AuthorizationView")} />
               <Route component={() => (
                 <div className="empty" style={{ background: "unset" }}>
                   <p className="empty-title h5">404 - eShrug</p>
