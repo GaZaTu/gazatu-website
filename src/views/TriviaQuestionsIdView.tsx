@@ -19,7 +19,7 @@ interface State {
   loading: boolean
   readOnly: boolean
   data: Partial<QuestionData>
-  categories: any[]
+  categories: string[]
   newAfterSave: boolean
   showReports: boolean
   reports: QuestionReportData[]
@@ -108,19 +108,19 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
       const res = await triviaApi.questions.post(data)
 
       if (this.state.newAfterSave) {
-        this.setState({
-          newAfterSave: false,
-        })
-
-        if (!this.isNew) {
-          this.id = "new"
-        }
+        this.loadData()
       } else {
         this.id = res._id
       }
     } else {
       await triviaApi.questions.put(this.id, data)
+
+      this.id = "new"
     }
+
+    this.setState({
+      newAfterSave: false,
+    })
   }
 
   async loadCategories() {

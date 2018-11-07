@@ -29,10 +29,6 @@ export interface ReportedQuestionData {
 
 }
 
-export interface CategoryData {
-
-}
-
 const triviaQuestionsApi = new ApiEndpointGroup<QuestionData>("/trivia/questions")
 
 export const triviaApi = {
@@ -41,7 +37,7 @@ export const triviaApi = {
   report: (questionId: string, data: { submitter: string, message: string }) => api.post(`/trivia/questions/${questionId}/reports`, data),
   reports: () => api.get("/trivia/reports").then(res => res.data as ReportData[]),
   reportedQuestions: () => api.get("/trivia/reported-question").then(res => res.data as ReportedQuestionData[]),
-  categories: () => api.get("/trivia/categories").then(res => res.data as CategoryData[]),
+  categories: () => api.get("/trivia/categories").then(res => res.data as string[]),
   emptyQuestion: () => ({
     category: "",
     question: "",
