@@ -52,7 +52,9 @@ class ToastContainer extends React.PureComponent<Props, State> {
       <div className="toast-container">
         {this.state.toasts.map((toast, index) => (
           <div key={index} className={`toast ${toast.type ? `toast-${toast.type}` : ""}`} style={{ bottom: `${1 + (index * 3)}rem` }}>
-            {toast.closeButton && (<button className="btn btn-clear float-right" onClick={() => this.removeToast(toast)} />)}
+            {toast.closeButton && (
+              <button className="btn btn-clear float-right" onClick={() => this.removeToast(toast)} />
+            )}
             <small>{toast.children}</small>
           </div>
         ))}
@@ -63,15 +65,17 @@ class ToastContainer extends React.PureComponent<Props, State> {
 
 export default hot(module)(ToastContainer)
 
-export function toast(children: React.ReactNode, options = {} as Partial<Toast>) {
-  if (ToastContainer.instance) {
-    ToastContainer.instance.addToast(Object.assign(options, { children }))
+export function showToast(children: React.ReactNode, options = {} as Partial<Toast>) {
+  if (!ToastContainer.instance) {
+    throw "toast instance undefined"
   }
+
+  return ToastContainer.instance.addToast(Object.assign(options, { children }))
 }
 
 function makeToasterFn(type: any) {
   return (children: React.ReactNode, options = {} as Partial<Toast>) => {
-    return toast(children, Object.assign(options, { type }))
+    return showToast(children, Object.assign(options, { type }))
   }
 }
 

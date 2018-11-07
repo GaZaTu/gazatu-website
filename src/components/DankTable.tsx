@@ -135,7 +135,9 @@ class DankTable extends React.PureComponent<Props, State> {
             )}
           </tbody>
         </table>
-        {this.props.data.length >= this.pageSize && (<Pagination pageCount={this.pageCount} page={this.state.page} onChange={page => this.setState({ page })} />)}
+        {this.props.data.length >= this.pageSize && (
+          <Pagination pageCount={this.pageCount} page={this.state.page} onChange={page => this.setState({ page })} />
+        )}
       </div>
     )
   }

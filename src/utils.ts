@@ -60,7 +60,7 @@ class Authorization {
 export const authorization = new Authorization()
 
 export const api = Axios.create({
-  baseURL: process.env.NODE_ENV === "production" ? "https://api.gazatu.win" : "http://localhost:8081",
+  baseURL: (process.env.NODE_ENV === "production") ? "https://api.gazatu.win" : "http://localhost:8088",
   headers: {
     post: {
       "Content-Type": "application/json",

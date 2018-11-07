@@ -7,6 +7,7 @@ import { loading, authorization } from "../utils";
 import { toaster } from "../components/ToastContainer";
 import * as idbKeyval from "idb-keyval";
 import DankTable, { DankColumn } from "../components/DankTable";
+import { showConfirmation } from "../components/ModalContainer";
 
 interface RouteParams {
   id: string
@@ -22,6 +23,7 @@ interface State {
   newAfterSave: boolean
   showReports: boolean
   reports: QuestionReportData[]
+  hasTriviaPermission: boolean
 }
 
 class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
@@ -36,6 +38,7 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
       newAfterSave: true,
       showReports: false,
       reports: [],
+      hasTriviaPermission: false,
     }
   }
 
@@ -57,6 +60,7 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
       await this.loadData()
       await Promise.all([
         this.loadCategories(),
+        this.loadReports(),
       ])
     } catch (error) {
       toaster.error(`${error}`)
@@ -83,13 +87,13 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
   }
 
   async loadReports() {
-    if (this.isNew) {
+    if (this.isNew || !this.state.hasTriviaPermission) {
       this.setState({
         reports: [],
       })
     } else {
       this.setState({
-        reports: await triviaApi.questionReports(this.id).get(),
+        reports: await triviaApi.questionReports(this.id),
       })
     }
   }
@@ -129,6 +133,7 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
     const hasTriviaPermission = authorization.hasPermission("trivia")
 
     this.setState({
+      hasTriviaPermission: hasTriviaPermission,
       readOnly: !this.isNew && !hasTriviaPermission,
       showReports: !this.isNew && hasTriviaPermission,
     })
@@ -158,6 +163,56 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
     })
   }
 
+  handleDelete = async () => {
+    const accepted = await showConfirmation("Delete?")
+
+    if (accepted) {
+      await triviaApi.questions.delete(this.id)
+      this.props.history.push("/trivia/questions")
+    }
+  }
+
+  handleVerify = async () => {
+    const accepted = await showConfirmation("Verify?")
+
+    if (accepted) {
+      await triviaApi.questions.put(this.id, this.state.data)
+      await this.load()
+    }
+  }
+
+  handleReport = async () => {
+    const data = {
+      submitter: "",
+      message: "",
+    }
+
+    const accepted = await showConfirmation(
+      <div className="form-horizontal">
+        <h5>Report question</h5>
+
+        <div className="form-group">
+          <div className="col-12">
+            <label className="form-label">Username*</label>
+            <input className="form-input" placeholder="Username" required onChange={ev => data.submitter = ev.target.value} />
+          </div>
+        </div>
+
+        <div className="form-group">
+          <div className="col-12">
+            <label className="form-label">Reason*</label>
+            <input className="form-input" placeholder="Reason" required onChange={ev => data.message = ev.target.value} />
+          </div>
+        </div>
+      </div>
+    )
+
+    if (accepted) {
+      await triviaApi.report(this.id, data)
+      await this.load()
+    }
+  }
+
   render() {
     return (
       <div>
@@ -169,7 +224,23 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
         >
           {(form: FormikProps<Partial<QuestionData>>) => (
             <Form className="form-horizontal">
-              <div className="btn-group btn-group-block col-2 col-sm-6 col-ml-auto">
+              <div className="btn-group btn-group-block col-5 col-sm-12 col-ml-auto">
+                {this.state.hasTriviaPermission && (
+                  <button className="btn btn-error" type="button" disabled={this.isNew} onClick={this.handleDelete}>
+                    <i className="icon icon-delete" />
+                  </button>
+                )}
+                
+                {this.state.hasTriviaPermission && (
+                  <button className="btn btn-success" type="button" disabled={this.isNew || this.state.data.verified} onClick={this.handleVerify}>
+                    <i className="icon icon-emoji" />
+                  </button>
+                )}
+
+                <button className="btn btn-warn" type="button" disabled={this.isNew} onClick={this.handleReport}>
+                  <i className="icon icon-flag" />
+                </button>
+
                 <button className={`btn ${this.isLoading(form) ? "loading" : ""}`} type="submit" disabled={this.state.readOnly} onClick={this.handleSaveAndNew}>
                   <i className="icon icon-check" />
                   <i className="icon icon-plus" />
@@ -228,10 +299,12 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
           )}
         </Formik>
 
-        {this.state.showReports && (<DankTable data={this.state.reports} style={{ maxHeight: "unset", overflow: "unset" }} caption="Reports">
-          <DankColumn name="message" />
-          <DankColumn name="submitter" />
-        </DankTable>)}
+        {this.state.showReports && (
+          <DankTable data={this.state.reports} style={{ maxHeight: "unset", overflow: "unset" }} caption="Reports">
+            <DankColumn name="message" />
+            <DankColumn name="submitter" />
+          </DankTable>
+        )}
       </div>
     )
   }

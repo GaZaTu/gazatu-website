@@ -69,7 +69,7 @@ table.responsive-table {
   display: flex;
   flex: 0 1 auto;
   flex-flow: row wrap;
-  padding: var(#{$universal-padding-var});
+  // padding: var(#{$universal-padding-var});
   padding-top: 0;
   @if not($_include-horizontal-table) {
     overflow: auto;

@@ -3,6 +3,7 @@ import { hot } from "react-hot-loader";
 import DankTable, { DankColumn } from "../components/DankTable";
 import { QuestionData, triviaApi } from "../api/trivia.api";
 import { RouteComponentProps } from "react-router";
+import { toaster } from "../components/ToastContainer";
 
 interface RouteParams { }
 
@@ -22,9 +23,13 @@ class TriviaQuestionsView extends React.PureComponent<Props, State> {
   }
 
   async load() {
-    this.setState({
-      questions: await triviaApi.questions.get({ shuffled: false }),
-    })
+    try {
+      this.setState({
+        questions: await triviaApi.questions.get({ shuffled: false }),
+      })
+    } catch (error) {
+      toaster.error(`${error}`)
+    }
   }
 
   componentDidMount() {

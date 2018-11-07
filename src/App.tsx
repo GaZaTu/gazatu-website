@@ -8,7 +8,8 @@ import LazyRoute from "./components/LazyRoute";
 import "./register-service-worker";
 import { authorization } from "./utils";
 import ToastContainer from "./components/ToastContainer";
-import { observer } from 'mobx-react';
+import { observer } from "mobx-react";
+import ModalContainer from "./components/ModalContainer";
 
 interface Props { }
 
@@ -46,7 +47,7 @@ class App extends React.Component<Props, State> {
 
           <div className={`app-sidebar off-canvas-sidebar ${this.state.sidebarActive ? "active" : ""}`}>
             <div className="app-brand">
-              <a href="/">GAZATU.WIN</a>
+              <a href="/">GAZATU.XYZ</a>
             </div>
             <div className="app-nav">
               <ul className="nav">
@@ -72,6 +73,7 @@ class App extends React.Component<Props, State> {
                 </div>
               )} />
             </Switch>
+            <ModalContainer />
             <ToastContainer />
             {/* <div style={{ bottom: 0, position: "fixed" }}>
               <p>Test Footer</p>

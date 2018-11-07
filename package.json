@@ -5,7 +5,7 @@
   "repository": "https://github.com/GaZaTu/gazatu-website",
   "main": "src/index.tsx",
   "scripts": {
-    "start": "webpack-dev-server --config ./webpack/dev.config.js --hot",
+    "start": "webpack-dev-server --config ./webpack/dev.config.js",
     "build": "webpack --config ./webpack/prod.config.js",
     "webpack-stats-json": "webpack --config ./webpack/prod.config.js --profile --json > ./stats.json",
     "webpack-bundle-analyzer": "webpack-bundle-analyzer ./stats.json"
