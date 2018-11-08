@@ -36,16 +36,25 @@ class TriviaQuestionsView extends React.PureComponent<Props, State> {
     this.load()
   }
 
+  sortDate = (dir: any, a: any, b: any) => {
+    return ((new Date(a) as any) - (new Date(b) as any)) * dir
+  }
+
+  renderDate = (val: any) => {
+    return new Date(val).toLocaleDateString()
+  }
+
   render() {
     return (
       <div style={{ padding: 0 }}>
         <DankTable data={this.state.questions} style={{ maxHeight: "unset", overflow: "unset" }} caption="Questions" keepHeadOnMobile>
           <DankColumn name="" render={(id, row) => (<a href={`#/trivia/questions/${row._id}`}><i className="icon icon-share" /></a>)} />
           <DankColumn name="category" filter="select" />
-          <DankColumn name="question" flex="5" filter="input" />
+          <DankColumn name="question" flex="3" filter="input" />
           <DankColumn name="hint1" />
           <DankColumn name="hint2" />
           <DankColumn name="submitter" filter="select" />
+          <DankColumn name="updatedAt" render={this.renderDate} onSort={this.sortDate} />
         </DankTable>
       </div>
     )

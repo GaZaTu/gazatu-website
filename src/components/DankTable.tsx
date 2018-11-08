@@ -8,6 +8,7 @@ export interface DankColumnProps {
   flex?: string
   filter?: "input" | "select"
   render?: (cell: any, row: any) => React.ReactNode
+  onSort?: (dir: -1 | 1, a: any, b: any) => number
 
   filterOptions?: string[]
   filterStr?: string
@@ -155,6 +156,12 @@ class DankTable extends React.PureComponent<Props, State> {
 
     for (const col of this.columns) {
       if (col.sortDir) {
+        if (col.onSort) {
+          return data.sort((a, b) => {
+            return col.onSort!(col.sortDir!, a[col.name], b[col.name])
+          })
+        }
+
         return data.sort((a, b) => {
           if (a[col.name] === b[col.name]) return 0
           if (a[col.name] < b[col.name]) return -col.sortDir!
