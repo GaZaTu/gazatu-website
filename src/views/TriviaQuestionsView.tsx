@@ -48,7 +48,7 @@ class TriviaQuestionsView extends React.PureComponent<Props, State> {
     return (
       <div style={{ padding: 0 }}>
         <DankTable data={this.state.questions} style={{ maxHeight: "unset", overflow: "unset" }} caption="Questions" keepHeadOnMobile>
-          <DankColumn name="" render={(id, row) => (<a href={`#/trivia/questions/${row._id}`}><i className="icon icon-share" /></a>)} />
+          <DankColumn name="" render={(_, row) => (<a href={`#/trivia/questions/${row._id}`}><i className="icon icon-share" /></a>)} />
           <DankColumn name="category" filter="select" />
           <DankColumn name="question" flex="3" filter="input" />
           <DankColumn name="hint1" />
