@@ -75,11 +75,10 @@ class DankTable extends React.PureComponent<Props, State> {
     for (const child of children) {
       if (typeof child === "object") {
         const childAsElem = child as React.ReactElement<any>
-
         if (typeof childAsElem.type === "function") {
-          if (childAsElem.type.prototype instanceof DankColumn) {
+          // if (childAsElem.type.prototype instanceof DankColumn) {
             columns.push(Object.assign({}, childAsElem.props))
-          }
+          // }
         }
       }
     }
