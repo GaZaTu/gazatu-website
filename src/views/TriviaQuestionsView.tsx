@@ -1,25 +1,19 @@
 import * as React from "react";
 import { hot } from "react-hot-loader";
-import DankTable from "../components/DankTable";
+import DankTable, { DankColumn } from "../components/DankTable";
+import { QuestionData, triviaApi } from "../api/trivia.api";
+import { RouteComponentProps } from "react-router";
+import { toaster } from "../components/ToastContainer";
 
-interface Question { }
+interface RouteParams { }
 
-interface Props { }
+type Props = RouteComponentProps<RouteParams>
 
 interface State {
-  questions: Question[]
+  questions: QuestionData[]
 }
 
-class TriviaQuestionsView extends React.Component<Props, State> {
-  cols = [
-    { key: "id" },
-    { key: "category" },
-    { key: "question", flex: "5" },
-    { key: "hint1" },
-    { key: "hint2" },
-    { key: "submitter" },
-  ]
-
+class TriviaQuestionsView extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props)
 
@@ -28,16 +22,31 @@ class TriviaQuestionsView extends React.Component<Props, State> {
     }
   }
 
+  async load() {
+    try {
+      this.setState({
+        questions: await triviaApi.questions.get({ shuffled: false }),
+      })
+    } catch (error) {
+      toaster.error(`${error}`)
+    }
+  }
+
   componentDidMount() {
-    fetch("https://api.gazatu.win/trivia/questions?shuffled=false")
-      .then(res => res.json())
-      .then(questions => this.setState({ questions }))
+    this.load()
   }
 
   render() {
     return (
       <div style={{ padding: 0 }}>
-        <DankTable cols={this.cols} data={this.state.questions} style={{ maxHeight: "unset", overflow: "unset" }} caption="Questions" />
+        <DankTable data={this.state.questions} style={{ maxHeight: "unset", overflow: "unset" }} caption="Questions" keepHeadOnMobile>
+          <DankColumn name="" render={(id, row) => (<a href={`#/trivia/questions/${row._id}`}><i className="icon icon-share" /></a>)} />
+          <DankColumn name="category" filter="select" />
+          <DankColumn name="question" flex="5" filter="input" />
+          <DankColumn name="hint1" />
+          <DankColumn name="hint2" />
+          <DankColumn name="submitter" filter="select" />
+        </DankTable>
       </div>
     )
   }

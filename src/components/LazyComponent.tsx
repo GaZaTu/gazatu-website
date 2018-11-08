@@ -1,8 +1,10 @@
 import * as React from "react";
 import { hot } from "react-hot-loader";
+import { RouteComponentProps } from "react-router";
 
 interface Props {
   provider: () => Promise<any>
+  routeComponentProps: RouteComponentProps
 }
 
 interface State {
@@ -30,7 +32,7 @@ class LazyComponent extends React.PureComponent<Props, State> {
 
     return (
       <div>
-        {Component ? <Component /> : <div className="loading loading-lg" />}
+        {Component ? <Component {...this.props.routeComponentProps} /> : <div className="loading loading-lg" />}
       </div>
     )
   }

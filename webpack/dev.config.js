@@ -15,7 +15,8 @@ module.exports = merge(baseConfig, {
         test: /\.(sc|c)ss$/,
         use: [
           "style-loader",
-          "css-loader",
+          { loader: "css-loader", options: { importLoaders: 1 } },
+          "postcss-loader",
           "sass-loader",
         ],
       },
@@ -26,7 +27,7 @@ module.exports = merge(baseConfig, {
     contentBase: path.join(__dirname, "../dist/"),
     port: 3000,
     publicPath: "http://localhost:3000/dist/",
-    hotOnly: true,
+    // hotOnly: true,
     index: path.resolve(__dirname, "../dist/index.html"),
   },
   optimization: {

@@ -17,7 +17,8 @@ module.exports = merge(baseConfig, {
         test: /\.(sc|c)ss$/,
         use: [
           MiniCssExtractPlugin.loader,
-          "css-loader",
+          { loader: "css-loader", options: { importLoaders: 1 } },
+          "postcss-loader",
           "sass-loader",
         ],
       },

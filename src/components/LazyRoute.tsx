@@ -9,8 +9,14 @@ interface Props {
   provider: () => Promise<any>
 }
 
-const LazyRoute = (props: Props) => (
-  <Route exact={props.exact} path={props.path} component={() => <LazyComponent provider={props.provider} />} />
-)
+class LazyRoute extends React.PureComponent<Props> {
+  render() {
+    return (
+      <Route exact={this.props.exact} path={this.props.path} component={(routeComponentProps: any) => (
+        <LazyComponent provider={this.props.provider} routeComponentProps={routeComponentProps} />
+      )} />
+    )
+  }
+}
 
 export default hot(module)(LazyRoute)

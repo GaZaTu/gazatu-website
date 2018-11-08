@@ -3,7 +3,13 @@ import { hot } from "react-hot-loader";
 import { Link } from "react-router-dom";
 import AppNavItemLink from "./AppNavItemLink";
 
-class AppNavItemList extends React.Component<{ title: string, titleTo?: string }> {
+interface Props {
+  title: string,
+  titleTo?: string,
+  matchStartsWith?: string,
+}
+
+class AppNavItemList extends React.Component<Props> {
   render() {
     const active = (location.hash.substr(1) === this.props.titleTo) || this.isActive()
 
@@ -19,6 +25,12 @@ class AppNavItemList extends React.Component<{ title: string, titleTo?: string }
 
   isActive(propsChildren = this.props.children) {
     const children = Array.isArray(propsChildren) ? propsChildren : [propsChildren]
+
+    if (this.props.matchStartsWith) {
+      if (location.hash.substr(1).startsWith(this.props.matchStartsWith)) {
+        return true
+      }
+    }
 
     for (const child of children) {
       if (typeof child === "object") {

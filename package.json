@@ -1,13 +1,14 @@
 {
-  "name": "website3",
+  "name": "gazatu-website",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "lmao",
+  "repository": "https://github.com/GaZaTu/gazatu-website",
+  "main": "src/index.tsx",
   "scripts": {
-    "start": "webpack-dev-server --config ./webpack/dev.config.js --hot",
+    "start": "webpack-dev-server --config ./webpack/dev.config.js",
     "build": "webpack --config ./webpack/prod.config.js",
-    "webpack-stats-json": "webpack --mode production --profile --json > ./dist/stats.json",
-    "webpack-bundle-analyzer": "webpack-bundle-analyzer ./dist/stats.json"
+    "webpack-stats-json": "webpack --config ./webpack/prod.config.js --profile --json > ./stats.json",
+    "webpack-bundle-analyzer": "webpack-bundle-analyzer ./stats.json"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +20,7 @@
     "@types/react": "^16.4.16",
     "@types/react-dom": "^16.0.9",
     "@types/react-router-dom": "^4.3.1",
+    "autoprefixer": "^9.2.1",
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.4",
     "clean-webpack-plugin": "^0.1.19",
@@ -28,6 +30,7 @@
     "mini-css-extract-plugin": "^0.4.4",
     "node-sass": "^4.9.4",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "postcss-loader": "^3.0.0",
     "sass-loader": "^7.1.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "^0.23.1",
@@ -41,6 +44,11 @@
     "write-file-webpack-plugin": "^4.4.1"
   },
   "dependencies": {
+    "axios": "^0.18.0",
+    "formik": "^1.3.1",
+    "idb-keyval": "^3.1.0",
+    "mobx": "^5.5.1",
+    "mobx-react": "^5.3.4",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-hot-loader": "^4.3.11",
