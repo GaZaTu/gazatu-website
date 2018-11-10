@@ -1,10 +1,18 @@
 import Axios from "axios";
-import { observable, observe, computed } from "mobx";
+import { observable, computed } from "mobx";
 import { AuthResult, UserData } from "./api/auth.api";
-import * as idbKeyval from "idb-keyval";
+
+export const api = Axios.create({
+  baseURL: (process.env.NODE_ENV === "production") ? "https://api.gazatu.xyz" : "http://localhost:8088",
+  headers: {
+    post: {
+      "Content-Type": "application/json",
+    },
+  },
+})
 
 class Authorization {
-  static idbKeyvalKey = "AuthResult"
+  static storageKey = "AuthResult"
 
   @observable
   token?: string
@@ -12,11 +20,11 @@ class Authorization {
   user?: UserData
 
   constructor() {
-    idbKeyval.get<AuthResult>(Authorization.idbKeyvalKey).then(res => {
-      if (res) {
-        this.login(res)
-      }
-    })
+    const auth = localStorage.getItem(Authorization.storageKey)
+
+    if (auth) {
+      this.login(JSON.parse(auth))
+    }
   }
 
   @computed
@@ -24,16 +32,24 @@ class Authorization {
     return !!this.token
   }
 
+  @computed
+  get id() {
+    return this.user ? this.user._id : null
+  }
+
+  @computed
+  get permissions() {
+    return this.user ? this.user.permissions : []
+  }
+
   hasPermission(...needs: string[]) {
     if (!this.user) {
       return false
     }
 
-    const permissions = this.user.permissions.map(perm => perm.name)
-
     if (!this.user.isMaster) {
       for (const permission of needs) {
-        if (!permissions.includes(permission)) {
+        if (!this.user.permissions.includes(permission)) {
           return false
         }
       }
@@ -46,37 +62,32 @@ class Authorization {
     this.token = auth.token
     this.user = auth.user
 
-    idbKeyval.set(Authorization.idbKeyvalKey, auth)
+    this.updateApiToken(this.token)
+
+    localStorage.setItem(Authorization.storageKey, JSON.stringify(auth))
   }
 
   logout() {
     this.token = undefined
     this.user = undefined
 
-    idbKeyval.del(Authorization.idbKeyvalKey)
+    this.updateApiToken(this.token)
+
+    localStorage.removeItem(Authorization.storageKey)
+  }
+
+  private updateApiToken(token: string | undefined) {
+    const commonHeaders = api.defaults.headers.common
+
+    if (token) {
+      commonHeaders["Authorization"] = `Bearer ${token}`
+    } else if (commonHeaders["Authorization"]) {
+      delete commonHeaders["Authorization"]
+    }
   }
 }
 
 export const authorization = new Authorization()
-
-export const api = Axios.create({
-  baseURL: (process.env.NODE_ENV === "production") ? "https://api.gazatu.xyz" : "http://localhost:8088",
-  headers: {
-    post: {
-      "Content-Type": "application/json",
-    },
-  },
-})
-
-observe(authorization, "token", change => {
-  const commonHeaders = api.defaults.headers.common
-
-  if (change.newValue) {
-    commonHeaders["Authorization"] = `Bearer ${change.newValue}`
-  } else if (commonHeaders["Authorization"]) {
-    delete commonHeaders["Authorization"]
-  }
-})
 
 api.interceptors.response.use(undefined, err => {
   if (authorization.isLoggedIn && err.response && err.response.status === 401) {

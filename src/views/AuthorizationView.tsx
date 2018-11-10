@@ -1,6 +1,6 @@
 import * as React from "react";
 import { hot } from "react-hot-loader";
-import { Formik, FormikActions, FormikProps, Form, Field, FormikErrors } from "formik";
+import { Formik, FormikActions, Form, Field, FormikErrors } from "formik";
 import { AuthData, authApi } from "../api/auth.api";
 import { authorization } from "../utils";
 import { toaster } from "../components/ToastContainer";
@@ -30,7 +30,7 @@ class AuthorizationView extends React.PureComponent<Props, State> {
   componentDidMount() {
     if (authorization.isLoggedIn) {
       authorization.logout()
-      this.props.history.push("/")
+      this.props.history.push("/login")
     }
   }
   
@@ -68,10 +68,10 @@ class AuthorizationView extends React.PureComponent<Props, State> {
           initialValues={this.state.data}
           onSubmit={this.handleAuthenticate}
         >
-          {(form: FormikProps<AuthData>) => (
+          {form => (
             <Form className="form-horizontal">
               <div className="form-group">
-                <div className="col-9 col-sm-12">
+                <div className="col-6 col-sm-12">
                   <label className="form-label">Username*</label>
                   <Field className="form-input" name="username" placeholder="Username" required />
                 </div>
@@ -105,10 +105,10 @@ class AuthorizationView extends React.PureComponent<Props, State> {
           }}
           onSubmit={this.handleRegister}
         >
-          {(form: FormikProps<AuthData>) => (
+          {form => (
             <Form className="form-horizontal">
               <div className="form-group">
-                <div className="col-9 col-sm-12">
+                <div className="col-6 col-sm-12">
                   <label className="form-label">Username*</label>
                   <Field className="form-input" name="username" placeholder="Username" required />
                 </div>

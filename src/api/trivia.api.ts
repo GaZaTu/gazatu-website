@@ -36,7 +36,7 @@ export const triviaApi = {
   questionReports: (questionId: string) => api.get(`/trivia/questions/${questionId}/reports`).then(res => res.data as QuestionReportData[]),
   report: (questionId: string, data: { submitter: string, message: string }) => api.post(`/trivia/questions/${questionId}/reports`, data),
   reports: () => api.get("/trivia/reports").then(res => res.data as ReportData[]),
-  reportedQuestions: () => api.get("/trivia/reported-question").then(res => res.data as ReportedQuestionData[]),
+  reportedQuestions: () => api.get("/trivia/reported-questions").then(res => res.data as ReportedQuestionData[]),
   categories: () => api.get("/trivia/categories").then(res => res.data as string[]),
   emptyQuestion: () => ({
     category: "",

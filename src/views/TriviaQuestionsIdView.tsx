@@ -1,12 +1,12 @@
 import * as React from "react";
 import { hot } from "react-hot-loader";
 import { RouteComponentProps } from "react-router";
-import { Formik, Form, Field, FormikActions, FormikProps } from "formik";
+import { Formik, Form, Field, FormikActions } from "formik";
 import { QuestionData, triviaApi, QuestionReportData } from "../api/trivia.api";
 import { loading, authorization } from "../utils";
 import { toaster } from "../components/ToastContainer";
 import * as idbKeyval from "idb-keyval";
-import DankTable, { DankColumn } from "../components/DankTable";
+import DankTable, { DankColumn, tableRenderDate, tableSortDate } from "../components/DankTable";
 import { showConfirmation } from "../components/ModalContainer";
 
 interface RouteParams {
@@ -35,7 +35,7 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
       readOnly: true,
       data: triviaApi.emptyQuestion(),
       categories: [],
-      newAfterSave: true,
+      newAfterSave: false,
       showReports: false,
       reports: [],
       hasTriviaPermission: false,
@@ -115,10 +115,14 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
     } else {
       await triviaApi.questions.put(this.id, data)
 
-      this.id = "new"
+      if (this.state.newAfterSave) {
+        this.id = "new"
+      } else {
+        this.loadData()
+      }
     }
 
-    this.setState({
+    await this.setState({
       newAfterSave: false,
     })
   }
@@ -222,22 +226,22 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
           initialValues={this.state.data}
           onSubmit={this.handleSubmit}
         >
-          {(form: FormikProps<Partial<QuestionData>>) => (
+          {form => (
             <Form className="form-horizontal">
               <div className="btn-group btn-group-block col-5 col-sm-12 col-ml-auto">
                 {this.state.hasTriviaPermission && (
-                  <button className="btn btn-error" type="button" disabled={this.isNew} onClick={this.handleDelete}>
+                  <button className={`btn btn-error ${this.isLoading(form) ? "loading" : ""}`} type="button" disabled={this.isNew} onClick={this.handleDelete}>
                     <i className="icon icon-delete" />
                   </button>
                 )}
                 
                 {this.state.hasTriviaPermission && (
-                  <button className="btn btn-success" type="button" disabled={this.isNew || this.state.data.verified} onClick={this.handleVerify}>
+                  <button className={`btn btn-success ${this.isLoading(form) ? "loading" : ""}`} type="button" disabled={this.isNew || this.state.data.verified} onClick={this.handleVerify}>
                     <i className="icon icon-emoji" />
                   </button>
                 )}
 
-                <button className="btn btn-warn" type="button" disabled={this.isNew} onClick={this.handleReport}>
+                <button className={`btn btn-warn ${this.isLoading(form) ? "loading" : ""}`} type="button" disabled={this.isNew} onClick={this.handleReport}>
                   <i className="icon icon-flag" />
                 </button>
 
@@ -303,6 +307,7 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
           <DankTable data={this.state.reports} style={{ maxHeight: "unset", overflow: "unset" }} caption="Reports">
             <DankColumn name="message" />
             <DankColumn name="submitter" />
+            <DankColumn name="updatedAt" render={tableRenderDate} onSort={tableSortDate} />
           </DankTable>
         )}
       </div>

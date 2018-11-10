@@ -65,10 +65,10 @@
 // @import "~spectre.css/src/breadcrumbs";
 // @import "~spectre.css/src/bars";
 // @import "~spectre.css/src/cards";
-// @import "~spectre.css/src/chips";
+@import "~spectre.css/src/chips";
 // @import "~spectre.css/src/dropdowns";
 @import "~spectre.css/src/empty";
-// @import "~spectre.css/src/menus";
+@import "~spectre.css/src/menus";
 @import "~spectre.css/src/modals";
 @import "~spectre.css/src/navs";
 @import "~spectre.css/src/pagination";
@@ -76,7 +76,7 @@
 // @import "~spectre.css/src/popovers";
 // @import "~spectre.css/src/steps";
 // @import "~spectre.css/src/tabs";
-// @import "~spectre.css/src/tiles";
+@import "~spectre.css/src/tiles";
 @import "~spectre.css/src/toasts";
 // @import "~spectre.css/src/tooltips";
 
@@ -86,7 +86,7 @@
 
 /*! Spectre.css Experimentals v#{$version} | MIT License | github.com/picturepan2/spectre */
 // Experimentals
-// @import "~spectre.css/src/autocomplete";
+@import "~spectre.css/src/autocomplete";
 // @import "~spectre.css/src/calendars";
 // @import "~spectre.css/src/carousels";
 // @import "~spectre.css/src/comparison-sliders";

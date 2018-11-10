@@ -1,6 +1,6 @@
 import * as React from "react";
 import { hot } from "react-hot-loader";
-import DankTable, { DankColumn } from "../components/DankTable";
+import DankTable, { DankColumn, tableRenderDate, tableSortDate } from "../components/DankTable";
 import { QuestionData, triviaApi } from "../api/trivia.api";
 import { RouteComponentProps } from "react-router";
 import { toaster } from "../components/ToastContainer";
@@ -10,7 +10,7 @@ interface RouteParams { }
 type Props = RouteComponentProps<RouteParams>
 
 interface State {
-  questions: QuestionData[]
+  data: QuestionData[]
 }
 
 class TriviaQuestionsView extends React.PureComponent<Props, State> {
@@ -18,14 +18,14 @@ class TriviaQuestionsView extends React.PureComponent<Props, State> {
     super(props)
 
     this.state = {
-      questions: [],
+      data: [],
     }
   }
 
   async load() {
     try {
       this.setState({
-        questions: await triviaApi.questions.get({ shuffled: false }),
+        data: await triviaApi.questions.get({ shuffled: false }),
       })
     } catch (error) {
       toaster.error(`${error}`)
@@ -36,25 +36,17 @@ class TriviaQuestionsView extends React.PureComponent<Props, State> {
     this.load()
   }
 
-  sortDate = (dir: any, a: any, b: any) => {
-    return ((new Date(a) as any) - (new Date(b) as any)) * dir
-  }
-
-  renderDate = (val: any) => {
-    return new Date(val).toLocaleDateString()
-  }
-
   render() {
     return (
       <div style={{ padding: 0 }}>
-        <DankTable data={this.state.questions} style={{ maxHeight: "unset", overflow: "unset" }} caption="Questions" keepHeadOnMobile>
+        <DankTable data={this.state.data} style={{ maxHeight: "unset", overflow: "unset" }} caption="Questions" keepHeadOnMobile>
           <DankColumn name="" render={(_, row) => (<a href={`#/trivia/questions/${row._id}`}><i className="icon icon-share" /></a>)} />
           <DankColumn name="category" filter="select" />
           <DankColumn name="question" flex="3" filter="input" />
           <DankColumn name="hint1" />
           <DankColumn name="hint2" />
           <DankColumn name="submitter" filter="select" />
-          <DankColumn name="updatedAt" render={this.renderDate} onSort={this.sortDate} />
+          <DankColumn name="updatedAt" render={tableRenderDate} onSort={tableSortDate} />
         </DankTable>
       </div>
     )

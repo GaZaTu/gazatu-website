@@ -1,6 +1,6 @@
 import * as React from "react";
 import { hot } from "react-hot-loader";
-import Pagination from "./Pagination";
+import DankPagination from "./DankPagination";
 
 export interface DankColumnProps {
   name: string
@@ -136,7 +136,7 @@ class DankTable extends React.PureComponent<Props, State> {
           </tbody>
         </table>
         {this.props.data.length >= this.pageSize && (
-          <Pagination pageCount={this.pageCount} page={this.state.page} onChange={page => this.setState({ page })} />
+          <DankPagination pageCount={this.pageCount} page={this.state.page} onChange={page => this.setState({ page })} />
         )}
       </div>
     )
@@ -263,3 +263,11 @@ class DankTable extends React.PureComponent<Props, State> {
 }
 
 export default hot(module)(DankTable)
+
+export function tableRenderDate(val: any) {
+  return new Date(val).toLocaleDateString()
+}
+
+export function tableSortDate(dir: any, a: any, b: any) {
+  return ((new Date(a) as any) - (new Date(b) as any)) * dir
+}

@@ -73,7 +73,7 @@ export function showToast(children: React.ReactNode, options = {} as Partial<Toa
   return ToastContainer.instance.addToast(Object.assign(options, { children }))
 }
 
-function makeToasterFn(type: any) {
+function makeToasterFn(type: Toast["type"]) {
   return (children: React.ReactNode, options = {} as Partial<Toast>) => {
     return showToast(children, Object.assign(options, { type }))
   }
