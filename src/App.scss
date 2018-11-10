@@ -120,9 +120,13 @@
   }
 }
 
-.app-sidebar.off-canvas-sidebar:not(.active) {
-  // height: stretch;
-  background: unset;
+.app-sidebar.off-canvas-sidebar {
+  min-width: 12rem;
+
+  &:not(.active) {
+    // height: stretch;
+    background: unset;
+  }
 }
 
 .app-brand {
