@@ -4,10 +4,11 @@ import { RouteComponentProps } from "react-router";
 import { Formik, Form, Field, FormikActions } from "formik";
 import { QuestionData, triviaApi, QuestionReportData } from "../api/trivia.api";
 import { loading, authorization } from "../utils";
-import { toaster } from "../components/ToastContainer";
+import { toaster } from "../components/SpectreToastContainer";
 import * as idbKeyval from "idb-keyval";
 import DankTable, { DankColumn, tableRenderDate, tableSortDate } from "../components/DankTable";
-import { showConfirmation } from "../components/ModalContainer";
+import { showConfirmation } from "../components/SpectreModalContainer";
+import SpectreButton from "../components/SpectreButton";
 
 interface RouteParams {
   id: string
@@ -230,29 +231,29 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
             <Form className="form-horizontal">
               <div className="btn-group btn-group-block col-5 col-sm-12 col-ml-auto">
                 {this.state.hasTriviaPermission && (
-                  <button className={`btn btn-error ${this.isLoading(form) ? "loading" : ""}`} type="button" disabled={this.isNew} onClick={this.handleDelete}>
+                  <SpectreButton type="button" color="error" loading={this.isLoading(form)} disabled={this.isNew} onClick={this.handleDelete}>
                     <i className="icon icon-delete" />
-                  </button>
+                  </SpectreButton>
                 )}
                 
                 {this.state.hasTriviaPermission && (
-                  <button className={`btn btn-success ${this.isLoading(form) ? "loading" : ""}`} type="button" disabled={this.isNew || this.state.data.verified} onClick={this.handleVerify}>
+                  <SpectreButton type="button" color="success" loading={this.isLoading(form)} disabled={this.isNew || this.state.data.verified} onClick={this.handleVerify}>
                     <i className="icon icon-emoji" />
-                  </button>
+                  </SpectreButton>
                 )}
 
-                <button className={`btn btn-warn ${this.isLoading(form) ? "loading" : ""}`} type="button" disabled={this.isNew} onClick={this.handleReport}>
+                <SpectreButton type="button" loading={this.isLoading(form)} disabled={this.isNew} onClick={this.handleReport}>
                   <i className="icon icon-flag" />
-                </button>
+                </SpectreButton>
 
-                <button className={`btn ${this.isLoading(form) ? "loading" : ""}`} type="submit" disabled={this.state.readOnly} onClick={this.handleSaveAndNew}>
+                <SpectreButton type="submit" loading={this.isLoading(form)} disabled={this.state.readOnly} onClick={this.handleSaveAndNew}>
                   <i className="icon icon-check" />
                   <i className="icon icon-plus" />
-                </button>
+                </SpectreButton>
 
-                <button className={`btn ${this.isLoading(form) ? "loading" : ""}`} type="submit" disabled={this.state.readOnly}>
+                <SpectreButton type="submit" loading={this.isLoading(form)} disabled={this.state.readOnly}>
                   <i className="icon icon-check" />
-                </button>
+                </SpectreButton>
               </div>
 
               <div className="form-group">

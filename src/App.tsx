@@ -8,9 +8,9 @@ import LazyRoute from "./components/LazyRoute";
 import "./register-service-worker";
 import { authorization } from "./utils";
 import { observer } from "mobx-react";
-import ToastContainer from "./components/ToastContainer";
-import ModalContainer from "./components/ModalContainer";
-import MenuContainer from "./components/MenuContainer";
+import SpectreToastContainer from "./components/SpectreToastContainer";
+import SpectreModalContainer from "./components/SpectreModalContainer";
+import SpectreMenuContainer from "./components/SpectreMenuContainer";
 
 interface Props { }
 
@@ -93,9 +93,9 @@ class App extends React.Component<Props, State> {
                 </div>
               )} />
             </Switch>
-            <ModalContainer />
-            <ToastContainer />
-            <MenuContainer />
+            <SpectreModalContainer />
+            <SpectreToastContainer />
+            <SpectreMenuContainer />
             {/* <div style={{ bottom: 0, position: "fixed" }}>
               <p>Test Footer</p>
             </div> */}

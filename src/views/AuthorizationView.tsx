@@ -3,8 +3,9 @@ import { hot } from "react-hot-loader";
 import { Formik, FormikActions, Form, Field, FormikErrors } from "formik";
 import { AuthData, authApi } from "../api/auth.api";
 import { authorization } from "../utils";
-import { toaster } from "../components/ToastContainer";
+import { toaster } from "../components/SpectreToastContainer";
 import { RouteComponentProps } from "react-router";
+import SpectreButton from "../components/SpectreButton";
 
 interface RouteParams { }
 
@@ -85,7 +86,7 @@ class AuthorizationView extends React.PureComponent<Props, State> {
               </div>
 
               <div className="btn-group btn-group-block col-1 col-sm-3">
-                <button className={`btn ${form.isSubmitting ? "loading" : ""}`} type="submit">Login</button>
+                <SpectreButton type="submit" loading={form.isSubmitting}>Login</SpectreButton>
               </div>
             </Form>
           )}
@@ -130,7 +131,7 @@ class AuthorizationView extends React.PureComponent<Props, State> {
               </div>
 
               <div className="btn-group btn-group-block col-1 col-sm-3">
-                <button className={`btn ${form.isSubmitting ? "loading" : ""}`} type="submit">Register</button>
+                <SpectreButton type="submit" loading={form.isSubmitting}>Register</SpectreButton>
               </div>
             </Form>
           )}

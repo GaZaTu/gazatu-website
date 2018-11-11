@@ -23,7 +23,7 @@ interface Props {
   disabled?: boolean
 }
 
-class DankPagination extends React.PureComponent<Props> {
+class SpectrePagination extends React.PureComponent<Props> {
   render() {
     const renderItemState: RenderItemState = {
       addedLeftFiller: false,
@@ -72,4 +72,4 @@ class DankPagination extends React.PureComponent<Props> {
   }
 }
 
-export default hot(module)(DankPagination)
+export default hot(module)(SpectrePagination)

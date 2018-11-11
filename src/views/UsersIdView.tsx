@@ -3,10 +3,11 @@ import { hot } from "react-hot-loader";
 import { RouteComponentProps } from "react-router";
 import { Formik, Form, Field, FormikActions } from "formik";
 import { loading, authorization } from "../utils";
-import { toaster } from "../components/ToastContainer";
-import { showConfirmation } from "../components/ModalContainer";
+import { toaster } from "../components/SpectreToastContainer";
+import { showConfirmation } from "../components/SpectreModalContainer";
 import { UserData, authApi } from "../api/auth.api";
-import DankAutoComplete from "../components/DankAutoComplete";
+import SpectreAutoComplete from "../components/SpectreAutoComplete";
+import SpectreButton from "../components/SpectreButton";
 
 interface RouteParams {
   id: string
@@ -126,9 +127,9 @@ class UsersIdView extends React.PureComponent<Props, State> {
           {form => (
             <Form className="form-horizontal">
               <div className="btn-group btn-group-block col-2 col-sm-4 col-ml-auto">
-                <button className={`btn btn-error ${this.isLoading(form) ? "loading" : ""}`} type="button" onClick={this.handleDelete}>
+                <SpectreButton type="button" color="error" loading={this.isLoading(form)} disabled={this.isLoading(form)} onClick={this.handleDelete}>
                   <i className="icon icon-delete" />
-                </button>
+                </SpectreButton>
               </div>
 
               <div className="form-group">
@@ -142,7 +143,7 @@ class UsersIdView extends React.PureComponent<Props, State> {
         </Formik>
 
         <label className="form-label">Permissions</label>
-        <DankAutoComplete options={this.state.permissions} tags={this.state.userPermissions} onChange={this.handlePermissionsChange} readOnly={!this.state.hasUsersPermission} />
+        <SpectreAutoComplete options={this.state.permissions} tags={this.state.userPermissions} onChange={this.handlePermissionsChange} readOnly={!this.state.hasUsersPermission} />
       </div>
     )
   }

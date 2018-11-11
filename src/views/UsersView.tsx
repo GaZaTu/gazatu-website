@@ -2,7 +2,7 @@ import * as React from "react";
 import { hot } from "react-hot-loader";
 import DankTable, { DankColumn, tableRenderDate, tableSortDate } from "../components/DankTable";
 import { RouteComponentProps } from "react-router";
-import { toaster } from "../components/ToastContainer";
+import { toaster } from "../components/SpectreToastContainer";
 import { UserData, authApi } from "../api/auth.api";
 
 interface RouteParams { }

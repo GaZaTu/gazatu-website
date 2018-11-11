@@ -9,10 +9,18 @@ interface Props {
 }
 
 interface State {
-
+  newTag: string
 }
 
-class DankAutoComplete extends React.PureComponent<Props, State> {
+class SpectreAutoComplete extends React.PureComponent<Props, State> {
+  constructor(props: Props) {
+    super(props)
+
+    this.state = {
+      newTag: "",
+    }
+  }
+
   add(which: string) {
     if (this.props.onChange) {
       this.props.onChange([...this.props.tags, which])
@@ -25,13 +33,45 @@ class DankAutoComplete extends React.PureComponent<Props, State> {
     }
   }
 
-  handleNewTagKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  getFilteredOptions() {
+    return this.props.options.filter(opt => {
+      if (this.props.tags.includes(opt)) {
+        return false
+      }
+
+      if (this.state.newTag && !opt.includes(this.state.newTag)) {
+        return false
+      }
+
+      return true
+    })
+  }
+
+  handleNewTagChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      newTag: event.currentTarget.value,
+    })
+  }
+
+  handleNewTagKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === " ") {
-      const newTag = event.currentTarget.value.slice(0, -1)
+      event.preventDefault()
+      
+      this.add(this.state.newTag)
+      this.setState({
+        newTag: "",
+      })
+    } else if (event.key === "Tab") {
+      event.preventDefault()
 
-      this.add(newTag)
+      const first = this.getFilteredOptions()[0]
 
-      event.currentTarget.value = ""
+      if (first) {
+        this.add(first)
+        this.setState({
+          newTag: "",
+        })
+      }
     }
   }
 
@@ -41,20 +81,20 @@ class DankAutoComplete extends React.PureComponent<Props, State> {
         <div className="form-autocomplete-input form-input">
           {this.props.tags.map(tag => (
             <div key={tag} className="chip">
-              <span>{tag}</span>
+              {tag}
               {!this.props.readOnly && (
                 <a className="btn btn-clear" onClick={() => this.remove(tag)} />
               )}
             </div>
           ))}
           {!this.props.readOnly && (
-            <input className="form-input" type="text" placeholder="typing here" onKeyUp={this.handleNewTagKeyUp} />
+            <input className="form-input" type="text" placeholder="typing here" value={this.state.newTag} onChange={this.handleNewTagChange} onKeyDown={this.handleNewTagKeyDown} />
           )}
         </div>
 
         {!this.props.readOnly && (
           <ul className="menu" style={{ zIndex: "unset" }}>
-            {this.props.options.filter(opt => !this.props.tags.includes(opt)).map(opt => (
+            {this.getFilteredOptions().map(opt => (
               <li key={opt} className="menu-item">
                 <a className="c-hand" onClick={() => this.add(opt)}>
                   <div className="tile tile-centered">
@@ -70,4 +110,4 @@ class DankAutoComplete extends React.PureComponent<Props, State> {
   }
 }
 
-export default hot(module)(DankAutoComplete)
+export default hot(module)(SpectreAutoComplete)

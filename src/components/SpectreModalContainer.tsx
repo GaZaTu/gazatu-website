@@ -16,8 +16,8 @@ interface State {
   resolve: () => any
 }
 
-class ModalContainer extends React.PureComponent<Props, State> {
-  static instance?: ModalContainer
+class SpectreModalContainer extends React.PureComponent<Props, State> {
+  static instance?: SpectreModalContainer
 
   constructor(props: any) {
     super(props)
@@ -27,7 +27,7 @@ class ModalContainer extends React.PureComponent<Props, State> {
       resolve: () => null,
     }
 
-    ModalContainer.instance = this
+    SpectreModalContainer.instance = this
   }
 
   show(modal: Modal) {
@@ -80,14 +80,14 @@ class ModalContainer extends React.PureComponent<Props, State> {
   }
 }
 
-export default hot(module)(ModalContainer)
+export default hot(module)(SpectreModalContainer)
 
 export function showModal(options: Modal) {
-  if (!ModalContainer.instance) {
+  if (!SpectreModalContainer.instance) {
     throw "modal instance undefined"
   }
 
-  return ModalContainer.instance.show(options)
+  return SpectreModalContainer.instance.show(options)
 }
 
 export async function showConfirmation(what: React.ReactNode) {

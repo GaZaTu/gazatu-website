@@ -1,6 +1,6 @@
 import * as React from "react";
 import { hot } from "react-hot-loader";
-import DankPagination from "./DankPagination";
+import SpectrePagination from "./SpectrePagination";
 
 export interface DankColumnProps {
   name: string
@@ -71,18 +71,16 @@ class DankTable extends React.PureComponent<Props, State> {
 
   updateColumns() {
     const columns = [] as DankColumnProps[]
-    const children = Array.isArray(this.props.children) ? this.props.children : [this.props.children]
 
-    for (const child of children) {
+    React.Children.forEach(this.props.children, child => {
       if (typeof child === "object") {
         const childAsElem = child as React.ReactElement<any>
+
         if (typeof childAsElem.type === "function") {
-          // if (childAsElem.type.prototype instanceof DankColumn) {
-            columns.push(Object.assign({}, childAsElem.props))
-          // }
+          columns.push(Object.assign({}, childAsElem.props))
         }
       }
-    }
+    })
 
     this.columns = columns
 
@@ -93,6 +91,10 @@ class DankTable extends React.PureComponent<Props, State> {
     const { style, caption } = this.props
     const data = this.getVisibleData()
 
+    if (this.columns.length === 0) {
+      this.updateColumns()
+    }
+
     return (
       <div>
         <table className="responsive-table striped" style={style}>
@@ -100,7 +102,7 @@ class DankTable extends React.PureComponent<Props, State> {
           <thead className={`${this.props.keepHeadOnMobile ? "keep-on-mobile" : ""}`}>
             <tr>
               {this.columns.map(col => (
-                <th key={col.name} style={{ flex: col.flex, cursor: "pointer" }} onClick={() => this.onColTitleClick(col)}>
+                <th key={col.name} style={{ flex: col.flex, cursor: "pointer", whiteSpace: "nowrap" }} onClick={() => this.onColTitleClick(col)}>
                   <span>{col.title || col.name}</span>
                   {col.sortDir === 1 && (<i className="icon icon-arrow-up" style={{ marginLeft: 5 }} />)}
                   {col.sortDir === -1 && (<i className="icon icon-arrow-down" style={{ marginLeft: 5 }} />)}
@@ -136,7 +138,7 @@ class DankTable extends React.PureComponent<Props, State> {
           </tbody>
         </table>
         {this.props.data.length >= this.pageSize && (
-          <DankPagination pageCount={this.pageCount} page={this.state.page} onChange={page => this.setState({ page })} />
+          <SpectrePagination pageCount={this.pageCount} page={this.state.page} onChange={page => this.setState({ page })} />
         )}
       </div>
     )

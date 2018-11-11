@@ -3,7 +3,7 @@ import { hot } from "react-hot-loader";
 import DankTable, { DankColumn, tableRenderDate, tableSortDate } from "../components/DankTable";
 import { QuestionData, triviaApi } from "../api/trivia.api";
 import { RouteComponentProps } from "react-router";
-import { toaster } from "../components/ToastContainer";
+import { toaster } from "../components/SpectreToastContainer";
 
 interface RouteParams { }
 

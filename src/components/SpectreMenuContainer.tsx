@@ -15,8 +15,8 @@ interface State {
   menus: Menu[]
 }
 
-class MenuContainer extends React.PureComponent<Props, State> {
-  static instance?: MenuContainer
+class SpectreMenuContainer extends React.PureComponent<Props, State> {
+  static instance?: SpectreMenuContainer
 
   constructor(props: any) {
     super(props)
@@ -25,7 +25,7 @@ class MenuContainer extends React.PureComponent<Props, State> {
       menus: [],
     }
 
-    MenuContainer.instance = this
+    SpectreMenuContainer.instance = this
   }
 
   addMenu(menuToAdd: Menu) {
@@ -61,7 +61,7 @@ class MenuContainer extends React.PureComponent<Props, State> {
 
   render() {
     return (
-      <div className="menu-container">
+      <div className="spectre-menu-container">
         {this.state.menus.map((menu, index) => (
           <div key={index} style={{ position: "absolute", left: menu.pos.x, top: menu.pos.y, zIndex: 300 + index }} onClick={menu.menuClickListener}>
             {menu.children}
@@ -72,14 +72,14 @@ class MenuContainer extends React.PureComponent<Props, State> {
   }
 }
 
-export default hot(module)(MenuContainer)
+export default hot(module)(SpectreMenuContainer)
 
 export function showMenu(children: React.ReactNode, options = {} as Partial<Menu>) {
-  if (!MenuContainer.instance) {
+  if (!SpectreMenuContainer.instance) {
     throw "menu instance undefined"
   }
 
-  return MenuContainer.instance.addMenu(Object.assign(options, { children }) as any)
+  return SpectreMenuContainer.instance.addMenu(Object.assign(options, { children }) as any)
 }
 
 // showMenu((
