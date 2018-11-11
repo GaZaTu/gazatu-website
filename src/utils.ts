@@ -3,7 +3,7 @@ import { observable, computed } from "mobx";
 import { AuthResult, UserData } from "./api/auth.api";
 
 export const api = Axios.create({
-  baseURL: (process.env.NODE_ENV !== "production") ? "https://api.gazatu.xyz" : "http://localhost:8088",
+  baseURL: (process.env.NODE_ENV === "production") ? "https://api.gazatu.xyz" : "http://localhost:8088",
   headers: {
     post: {
       "Content-Type": "application/json",
