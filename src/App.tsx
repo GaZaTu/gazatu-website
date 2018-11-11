@@ -48,7 +48,9 @@ class App extends React.Component<Props, State> {
 
           <div className={`app-sidebar off-canvas-sidebar ${this.state.sidebarActive ? "active" : ""}`}>
             <div className="app-brand">
-              <a href="/">GAZATU.XYZ</a>
+              <a href="#/">
+                <img className="img-responsive" style={{ width: "11em" }} src="/img/gazatu-xyz.svg" />
+              </a>
             </div>
             <div className="app-nav">
               <ul className="nav">

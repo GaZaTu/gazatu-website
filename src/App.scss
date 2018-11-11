@@ -1,24 +1,24 @@
 // edit variables
 // Core colors
-// $primary-color: lighten(#5755d9, 10%);
+$primary-color: lighten(#5755d9, 10%);
 // $primary-color-dark: darken($primary-color, 3%);
 // $primary-color-light: lighten($primary-color, 3%);
-// $secondary-color: lighten($primary-color, 37.5%);
+$secondary-color: rgba($primary-color, 0.15);
 // $secondary-color-dark: darken($secondary-color, 3%);
 // $secondary-color-light: lighten($secondary-color, 3%);
 
 // // Gray colors
-// $dark-color: darken(#ffffff, 20%);
-// $light-color: darken(#454d5d, 10%);
-// $gray-color: lighten($dark-color, 40%);
-// $gray-color-dark: darken($gray-color, 25%);
+$dark-color: darken(#ffffff, 20%);
+$light-color: darken(#454d5d, 10%);
+$gray-color: lighten($dark-color, 0%);
+$gray-color-dark: lighten($gray-color, 15%);
 // $gray-color-light: lighten($gray-color, 20%);
 
 // $border-color: lighten($dark-color, 60%);
 // $border-color-dark: darken($border-color, 10%);
-// $bg-color: lighten($dark-color, 66%);
+$bg-color: darken($light-color, 5%);
 // $bg-color-dark: darken($bg-color, 3%);
-// $bg-color-light: $light-color;
+$bg-color-light: $light-color;
 
 // // Control colors
 // $success-color: #32b643;
@@ -29,10 +29,18 @@
 // $code-color: #d73e48;
 // $highlight-color: #ffe9b3;
 // $body-bg: $bg-color-light;
-// $body-font-color: lighten($dark-color, 5%);
+$body-font-color: lighten($dark-color, 25%);
 // $link-color: $primary-color;
 // $link-color-dark: darken($link-color, 10%);
 // $link-color-light: lighten($link-color, 10%);
+
+$table-border-color: #aaa;
+$table-border-separator-color: #666;
+$table-th-back-color: lighten($light-color, 3%);
+$table-th-fore-color: $body-font-color;
+$table-td-back-color: lighten($light-color, 7%);
+$table-td-fore-color: $body-font-color;
+$table-td-alt-back-color: lighten($light-color, 5%);
 
 // import libs
 // Variables and mixins
@@ -52,7 +60,7 @@
 @import "~spectre.css/src/forms";
 @import "~spectre.css/src/labels";
 @import "~spectre.css/src/codes";
-// @import "~spectre.css/src/media";
+@import "~spectre.css/src/media";
 
 // Layout
 @import "~spectre.css/src/layout";
@@ -101,6 +109,15 @@
 @import "~spectre.css/src/spectre-icons";
 @import "./styles/responsive-table";
 
+// fix some spectre styles
+select.form-select {
+  background-color: $bg-color-light !important;
+}
+
+.nav .nav-item.active > a {
+  color: darken($gray-color-dark, 30%);
+}
+
 // style App
 .app-navbar {
   height: 2.8rem;
@@ -111,7 +128,7 @@
 
   .btn {
     position: absolute;
-    right: 1.5rem;
+    right: 0.5rem;
     top: 0.5rem;
 
     &.off-canvas-toggle {
@@ -151,7 +168,7 @@
 
 @media (max-width: $size-lg) {
   .app-navbar {
-    background: rgba(248, 249, 250, .65);
+    background: rgba(248, 249, 250, .15);
     left: 0;
   }
 }

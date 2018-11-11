@@ -1,8 +1,8 @@
 {
   "name": "gazatu.xyz",
   "short_name": "gazatu.xyz",
-  "theme_color": "#5755d9",
-  "background_color": "#f8f8f8",
+  "theme_color": "#807fe2",
+  "background_color": "#2f3540",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
