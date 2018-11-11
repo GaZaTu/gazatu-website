@@ -126,7 +126,7 @@ class DankTable extends React.PureComponent<Props, State> {
               </tr>
             ))}
             {data.length === 0 && (
-              <tr>
+              <tr style={{ padding: "unset" }}>
                 <td style={{ padding: "unset" }}>
                   <div className="empty">
                     <p className="empty-title h5">No Data</p>

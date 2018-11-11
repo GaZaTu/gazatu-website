@@ -251,7 +251,7 @@ table.responsive-table {
         @if $universal-box-shadow != none {
           box-shadow: var(#{$universal-box-shadow-var});
         }
-        background: #fafafa;     // use variables, this is a test (body)
+        background: $table-td-back-color;
         padding: var(#{$universal-padding-var});
         margin: var(#{$universal-margin-var});
         margin-bottom: calc(2 * var(#{$universal-margin-var}));
