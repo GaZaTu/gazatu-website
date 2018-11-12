@@ -22,6 +22,7 @@ interface Props {
   style?: React.CSSProperties
   caption?: string
   keepHeadOnMobile?: boolean
+  hotkeys?: boolean
 }
 
 interface State {
@@ -138,7 +139,7 @@ class DankTable extends React.PureComponent<Props, State> {
           </tbody>
         </table>
         {this.props.data.length >= this.pageSize && (
-          <SpectrePagination pageCount={this.pageCount} page={this.state.page} onChange={page => this.setState({ page })} />
+          <SpectrePagination pageCount={this.pageCount} page={this.state.page} onChange={page => this.setState({ page })} hotkeys={this.props.hotkeys} />
         )}
       </div>
     )

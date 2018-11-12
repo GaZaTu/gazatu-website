@@ -1,5 +1,6 @@
 import * as React from "react";
 import { hot } from "react-hot-loader";
+import { Subscription, hotkey } from "../utils";
 
 function range(start: number, end: number) {
   const res = [] as number[]
@@ -21,9 +22,31 @@ interface Props {
   page: number
   onChange: (page: number) => any
   disabled?: boolean
+  hotkeys?: boolean
 }
 
 class SpectrePagination extends React.PureComponent<Props> {
+  subscriptions = [] as Subscription[]
+
+  componentDidMount() {
+    this.subscriptions.push(
+      hotkey("ArrowLeft", () => {
+        if (this.props.page > 0) {
+          this.props.onChange(this.props.page - 1)
+        }
+      }),
+      hotkey("ArrowRight", () => {
+        if ((this.props.page + 1) < this.props.pageCount) {
+          this.props.onChange(this.props.page + 1)
+        }
+      }),
+    )
+  }
+
+  componentWillUnmount() {
+    this.subscriptions.forEach(sub => sub.unsubscribe())
+  }
+
   render() {
     const renderItemState: RenderItemState = {
       addedLeftFiller: false,

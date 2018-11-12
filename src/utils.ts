@@ -3,7 +3,7 @@ import { observable, computed } from "mobx";
 import { AuthResult, UserData } from "./api/auth.api";
 
 export const api = Axios.create({
-  baseURL: (process.env.NODE_ENV === "production") ? "https://api.gazatu.xyz" : "http://localhost:8088",
+  baseURL: (process.env.NODE_ENV !== "production") ? "https://api.gazatu.xyz" : "http://localhost:8088",
   headers: {
     post: {
       "Content-Type": "application/json",
@@ -148,4 +148,28 @@ export const loading = <T extends React.Component<any, LoadingState>, K extends 
 
     return result
   }
+}
+
+export interface Subscription {
+  unsubscribe(): void
+}
+
+export function hotkey(def: string, listener: (ev: KeyboardEvent) => any) {
+  const defs = def.split("+")
+  const keys = defs.filter(key => (key !== "shift") && (key !== "ctrl") && (key !== "alt"))
+  const shift = defs.includes("shift")
+  const ctrl = defs.includes("ctrl")
+  const alt = defs.includes("alt")
+
+  const realListener = (ev: KeyboardEvent) => {
+    if (ev.shiftKey === shift && ev.ctrlKey === ctrl && ev.altKey === alt && keys.includes(ev.key)) {
+      listener(ev)
+    }
+  }
+
+  window.addEventListener("keydown", realListener)
+
+  return {
+    unsubscribe: () => window.removeEventListener("keydown", realListener)
+  } as Subscription
 }

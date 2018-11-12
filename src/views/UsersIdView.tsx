@@ -21,6 +21,8 @@ interface State {
   hasUsersPermission: boolean
   permissions: string[]
   userPermissions: string[]
+  isProfile: boolean
+  userGrantedNotificationPermission: boolean
 }
 
 class UsersIdView extends React.PureComponent<Props, State> {
@@ -33,6 +35,8 @@ class UsersIdView extends React.PureComponent<Props, State> {
       hasUsersPermission: false,
       permissions: [],
       userPermissions: [],
+      isProfile: false,
+      userGrantedNotificationPermission: false,
     }
   }
 
@@ -85,9 +89,18 @@ class UsersIdView extends React.PureComponent<Props, State> {
   componentDidMount() {
     this.setState({
       hasUsersPermission: authorization.hasPermission("users"),
+      userGrantedNotificationPermission: Notification.permission === "granted",
     })
 
     this.load()
+  }
+
+  componentWillReceiveProps(newProps: Props) {
+    if (newProps.match.params.id === authorization.id) {
+      this.setState({
+        isProfile: true,
+      })
+    }
   }
 
   isLoading(form?: { isSubmitting: boolean }) {
@@ -115,6 +128,22 @@ class UsersIdView extends React.PureComponent<Props, State> {
     await this.load()
   }
 
+  handleSetupPushNotifications = async () => {
+    const permission = await Notification.requestPermission()
+
+    if (permission === "granted") {
+      navigator.serviceWorker.getRegistration().then(serviceWorker => {
+        if (serviceWorker) {
+          serviceWorker.showNotification("Test")
+        }
+      })
+
+      this.setState({
+        userGrantedNotificationPermission: true,
+      })
+    }
+  }
+
   render() {
     return (
       <div>
@@ -127,6 +156,12 @@ class UsersIdView extends React.PureComponent<Props, State> {
           {form => (
             <Form className="form-horizontal">
               <div className="btn-group btn-group-block col-2 col-sm-4 col-ml-auto">
+                {/* {this.state.isProfile && (
+                  <SpectreButton type="button" color="error" loading={this.isLoading(form)} disabled={this.state.userGrantedNotificationPermission} onClick={this.handleSetupPushNotifications}>
+                    <i className="icon icon-message" />
+                  </SpectreButton>
+                )} */}
+
                 <SpectreButton type="button" color="error" loading={this.isLoading(form)} disabled={this.isLoading(form)} onClick={this.handleDelete}>
                   <i className="icon icon-delete" />
                 </SpectreButton>

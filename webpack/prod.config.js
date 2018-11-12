@@ -64,8 +64,19 @@ module.exports = merge(baseConfig, {
       template: path.resolve(__dirname, "../public/index.html"),
     }),
     new WorkboxPlugin.GenerateSW({
-      clientsClaim: true,
+      swDest: "service-worker.js",
       skipWaiting: true,
+      clientsClaim: true,
+      runtimeCaching: [{
+        urlPattern: /^https:\/\/api\.gazatu\.xyz/,
+        handler: "networkFirst",
+        options: {
+          cacheableResponse: {
+            statuses: [0, 200],
+          },
+        },
+      }],
+      importScripts: ["/push-notifications.js"],
     }),
     new webpack.HashedModuleIdsPlugin(),
   ],
