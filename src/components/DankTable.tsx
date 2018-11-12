@@ -23,6 +23,7 @@ interface Props {
   caption?: string
   keepHeadOnMobile?: boolean
   hotkeys?: boolean
+  onRowContextMenu?: (row: any, event: React.MouseEvent) => any
 }
 
 interface State {
@@ -88,6 +89,12 @@ class DankTable extends React.PureComponent<Props, State> {
     return columns
   }
 
+  handleRowContextMenu = (row: any, event: React.MouseEvent) => {
+    if (this.props.onRowContextMenu) {
+      this.props.onRowContextMenu(row, event)
+    }
+  }
+
   render() {
     const { style, caption } = this.props
     const data = this.getVisibleData()
@@ -120,7 +127,7 @@ class DankTable extends React.PureComponent<Props, State> {
           </thead>
           <tbody>
             {data.map((row, idx) => (
-              <tr key={idx}>
+              <tr key={idx} onContextMenu={ev => this.handleRowContextMenu(row, ev)}>
                 {this.columns.map(col => (
                   <td key={col.name} style={{ flex: col.flex }} data-label={col.name}>{this.getRenderedCell(row, col)}</td>
                 ))}

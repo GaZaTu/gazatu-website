@@ -4,9 +4,10 @@ import { hot } from "react-hot-loader";
 export interface Menu {
   id?: string
   children: React.ReactNode
-  pos: { x: number, y: number }
+  pos: { x: number, y: number } | { clientX: number, clientY: number }
   documentClickListener?: () => any
   menuClickListener?: (event: React.MouseEvent) => any
+  removePrevious?: boolean
 }
 
 interface Props { }
@@ -42,9 +43,20 @@ class SpectreMenuContainer extends React.PureComponent<Props, State> {
 
     document.addEventListener("click", menuToAdd.documentClickListener)
 
-    this.setState({
-      menus: [...this.state.menus, menuToAdd],
-    })
+    if (menuToAdd.removePrevious) {
+      for (const menu of this.state.menus) {
+        this.removeMenu(menu)
+      }
+
+      this.setState({
+        menus: [menuToAdd],
+      })
+    } else {
+      this.setState({
+        menus: [...this.state.menus, menuToAdd],
+      })
+    }
+
 
     return { hide }
   }
@@ -59,11 +71,22 @@ class SpectreMenuContainer extends React.PureComponent<Props, State> {
     })
   }
 
+  makeMenuStyle(menu: Menu, index: number) {
+    const pos = menu.pos as any
+
+    return {
+      position: "absolute" as any,
+      left: pos.x || pos.clientX,
+      top: pos.y || pos.clientY,
+      zIndex: 300 + index,
+    }
+  }
+
   render() {
     return (
       <div className="spectre-menu-container">
         {this.state.menus.map((menu, index) => (
-          <div key={index} style={{ position: "absolute", left: menu.pos.x, top: menu.pos.y, zIndex: 300 + index }} onClick={menu.menuClickListener}>
+          <div key={index} style={this.makeMenuStyle(menu, index)} onClick={menu.menuClickListener}>
             {menu.children}
           </div>
         ))}

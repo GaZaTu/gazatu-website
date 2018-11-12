@@ -4,6 +4,7 @@ import DankTable, { DankColumn, tableRenderDate, tableSortDate } from "../compon
 import { QuestionData, triviaApi } from "../api/trivia.api";
 import { RouteComponentProps } from "react-router";
 import { toaster } from "../components/SpectreToastContainer";
+import { showMenu } from "../components/SpectreMenuContainer";
 
 interface RouteParams { }
 
@@ -36,10 +37,34 @@ class TriviaQuestionsView extends React.PureComponent<Props, State> {
     this.load()
   }
 
+  handleRowClick = (row: QuestionData, event: React.MouseEvent) => {
+    // event.preventDefault()
+    // event.persist()
+
+    // const handleVerify = () => {
+
+    // }
+
+    // const handleDelete = () => {
+
+    // }
+
+    // const menu = showMenu((
+    //   <ul className="menu">
+    //     <li className="menu-item">
+    //       <a className="c-hand" onClick={handleVerify}>Verify</a>
+    //     </li>
+    //     <li className="menu-item">
+    //       <a className="c-hand" onClick={handleDelete}>Delete</a>
+    //     </li>
+    //   </ul>
+    // ), { pos: event, removePrevious: true })
+  }
+
   render() {
     return (
       <div style={{ padding: 0 }}>
-        <DankTable data={this.state.data} style={{ maxHeight: "unset", overflow: "unset" }} caption="Questions" keepHeadOnMobile>
+        <DankTable data={this.state.data} style={{ maxHeight: "unset", overflow: "unset" }} caption="Questions" keepHeadOnMobile onRowContextMenu={this.handleRowClick}>
           <DankColumn name="" render={(_, row) => (<a href={`#/trivia/questions/${row._id}`}><i className="icon icon-share" /></a>)} />
           <DankColumn name="category" filter="select" />
           <DankColumn name="question" flex="3" filter="input" />
