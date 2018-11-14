@@ -181,6 +181,8 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
     const accepted = await showConfirmation("Verify?")
 
     if (accepted) {
+      this.state.data.verified = true
+
       await triviaApi.questions.put(this.id, this.state.data)
       await this.load()
     }

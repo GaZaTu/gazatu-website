@@ -14,7 +14,7 @@ $gray-color: lighten($dark-color, 0%);
 $gray-color-dark: lighten($gray-color, 15%);
 // $gray-color-light: lighten($gray-color, 20%);
 
-// $border-color: lighten($dark-color, 60%);
+$border-color: darken(#ffffff, 30%);
 // $border-color-dark: darken($border-color, 10%);
 $bg-color: darken($light-color, 5%);
 // $bg-color-dark: darken($bg-color, 3%);
@@ -72,7 +72,7 @@ $table-td-alt-back-color: lighten($light-color, 5%);
 // @import "~spectre.css/src/badges";
 // @import "~spectre.css/src/breadcrumbs";
 // @import "~spectre.css/src/bars";
-// @import "~spectre.css/src/cards";
+@import "~spectre.css/src/cards";
 @import "~spectre.css/src/chips";
 // @import "~spectre.css/src/dropdowns";
 @import "~spectre.css/src/empty";

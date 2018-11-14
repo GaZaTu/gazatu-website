@@ -69,6 +69,7 @@ class App extends React.Component<Props, State> {
                 {authorization.id && (
                   <AppNavItemLink to={`/users/${authorization.id}`}>Profile</AppNavItemLink>
                 )}
+                <AppNavItemLink to="/api-ref">Api-Ref</AppNavItemLink>
                 <AppNavItemLink to={authorization.isLoggedIn ? "/logout" : "/login"}>{authorization.isLoggedIn ? "Logout" : "Login"}</AppNavItemLink>
               </ul>
             </div>
@@ -87,6 +88,7 @@ class App extends React.Component<Props, State> {
                 <LazyRoute exact path="/users" provider={() => import("./views/UsersView")} />
               )}
               <LazyRoute exact path="/users/:id" provider={() => import("./views/UsersIdView")} />
+              <LazyRoute exact path="/api-ref" provider={() => import("./views/ApiRefView")} />
               <LazyRoute exact path={authorization.isLoggedIn ? "/logout" : "/login"} provider={() => import("./views/AuthorizationView")} />
               <Route component={() => (
                 <div className="empty" style={{ background: "unset" }}>

@@ -23,6 +23,7 @@ interface Props {
   caption?: string
   keepHeadOnMobile?: boolean
   hotkeys?: boolean
+  disableEmptyMsg?: boolean
   onRowContextMenu?: (row: any, event: React.MouseEvent) => any
 }
 
@@ -133,7 +134,7 @@ class DankTable extends React.PureComponent<Props, State> {
                 ))}
               </tr>
             ))}
-            {data.length === 0 && (
+            {(data.length === 0) && !this.props.disableEmptyMsg && (
               <tr style={{ padding: "unset" }}>
                 <td style={{ padding: "unset" }}>
                   <div className="empty">

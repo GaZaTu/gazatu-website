@@ -90,7 +90,7 @@ class Authorization {
 export const authorization = new Authorization()
 
 api.interceptors.response.use(undefined, err => {
-  if (authorization.isLoggedIn && err.response && err.response.status === 401) {
+  if (authorization.isLoggedIn && err.response && (err.response.status === 401 || err.response.status === 403)) {
     authorization.logout()
   }
 
