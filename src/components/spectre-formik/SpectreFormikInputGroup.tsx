@@ -3,6 +3,7 @@ import { hot } from "react-hot-loader";
 import SpectreInputGroup from "../spectre/SpectreInputGroup";
 import SpectreFormikInput from "./SpectreFormikInput";
 import SpectreFormikSelect from "./SpectreFormikSelect";
+import { reactNodeIsComponent } from "../../utils";
 
 interface Props extends React.ComponentProps<typeof SpectreInputGroup> { }
 
@@ -13,14 +14,14 @@ class SpectreFormikInputGroup extends React.PureComponent<Props> {
     )
   }
 
-  getPropsForChild = (elem: React.ReactElement<any>, prototype: any) => {
+  getPropsForChild = (node: React.ReactNode) => {
     const { size } = this.props
 
-    if (prototype instanceof SpectreFormikInput) {
+    if (reactNodeIsComponent(node, SpectreFormikInput)) {
       return {
         inputSize: size,
       }
-    } else if (prototype instanceof SpectreFormikSelect) {
+    } else if (reactNodeIsComponent(node, SpectreFormikSelect)) {
       return {
         inputSize: size,
       }

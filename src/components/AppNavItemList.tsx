@@ -2,6 +2,7 @@ import * as React from "react";
 import { hot } from "react-hot-loader";
 import { Link } from "react-router-dom";
 import AppNavItemLink from "./AppNavItemLink";
+import { reactNodeIsComponent } from "../utils";
 
 interface Props {
   title: string,
@@ -33,19 +34,13 @@ class AppNavItemList extends React.Component<Props> {
     }
 
     for (const child of children) {
-      if (typeof child === "object") {
-        const childAsElem = child as React.ReactElement<any>
-
-        if (typeof childAsElem.type === "function") {
-          if (childAsElem.type.prototype instanceof AppNavItemLink) {
-            if (location.hash.substr(1) === childAsElem.props.to) {
-              return true
-            }
-          } else if (childAsElem.type.prototype instanceof AppNavItemList) {
-            if (this.isActive(childAsElem.props.children)) {
-              return true
-            }
-          }
+      if (reactNodeIsComponent(child, AppNavItemLink)) {
+        if (location.hash.substr(1) === child.props.to) {
+          return true
+        }
+      } else if (reactNodeIsComponent(child, AppNavItemLink)) {
+        if (this.isActive(child.props.children)) {
+          return true
         }
       }
     }

@@ -3,6 +3,7 @@ import { hot } from "react-hot-loader";
 import { FormikProps } from "formik";
 import SpectreForm from "../spectre/SpectreForm";
 import SpectreFormikFormGroup from "./SpectreFormikFormGroup";
+import { reactNodeIsComponent } from "../../utils";
 
 interface Props extends React.ComponentProps<typeof SpectreForm> {
   formik: FormikProps<any>
@@ -20,8 +21,8 @@ class SpectreFormikForm extends React.PureComponent<Props> {
     )
   }
 
-  getPropsForChild = (elem: React.ReactElement<any>, prototype: any) => {
-    if (prototype instanceof SpectreFormikFormGroup) {
+  getPropsForChild = (node: React.ReactNode) => {
+    if (reactNodeIsComponent(node, SpectreFormikFormGroup)) {
       return {
         horizontal: this.props.horizontal,
         formik: this.props.formik,

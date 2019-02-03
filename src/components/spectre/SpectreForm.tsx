@@ -2,11 +2,12 @@ import * as React from "react";
 import { hot } from "react-hot-loader";
 import * as classNames from "classnames";
 import SpectreFormGroup from "./SpectreFormGroup";
+import { reactNodeIsComponent } from "../../utils";
 
 interface Props extends React.DetailedHTMLProps<React.FormHTMLAttributes<HTMLFormElement>, HTMLFormElement> {
   children?: React.ReactNode
   horizontal?: boolean
-  getPropsForChild?: (elem: React.ReactElement<any>, prototype: any) => any
+  getPropsForChild?: (node: React.ReactNode) => any
 }
 
 class SpectreForm extends React.PureComponent<Props> {
@@ -27,7 +28,7 @@ class SpectreForm extends React.PureComponent<Props> {
       <form {...nativeProps} className={className}>
         {React.Children.map(children, child => {
           const elem = child as React.ReactElement<any>
-          const props = this.getPropsForChild(elem, (elem.type as any).prototype)
+          const props = this.getPropsForChild(elem)
 
           if (props) {
             return React.cloneElement(elem, props)
@@ -39,13 +40,13 @@ class SpectreForm extends React.PureComponent<Props> {
     )
   }
 
-  getPropsForChild(elem: React.ReactElement<any>, prototype: any) {
-    if (prototype instanceof SpectreFormGroup) {
+  getPropsForChild(node: React.ReactNode) {
+    if (reactNodeIsComponent(node, SpectreFormGroup)) {
       return {
-        horizontal: this.props.horizontal,
+        horizontal: node.props.horizontal || this.props.horizontal,
       }
     } else if (this.props.getPropsForChild) {
-      return this.props.getPropsForChild(elem, prototype)
+      return this.props.getPropsForChild(node)
     } else {
       return null
     }
