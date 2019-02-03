@@ -1,0 +1,55 @@
+// edit variables
+// Core colors
+// $primary-color: #5755d9 !default;
+// $primary-color-dark: darken($primary-color, 3%) !default;
+// $primary-color-light: lighten($primary-color, 3%) !default;
+// $secondary-color: lighten($primary-color, 37.5%) !default;
+// $secondary-color-dark: darken($secondary-color, 3%) !default;
+// $secondary-color-light: lighten($secondary-color, 3%) !default;
+
+// // Gray colors
+// $dark-color: #454d5d !default;
+// $light-color: #fff !default;
+// $gray-color: lighten($dark-color, 40%) !default;
+// $gray-color-dark: darken($gray-color, 25%) !default;
+// $gray-color-light: lighten($gray-color, 20%) !default;
+
+// $border-color: lighten($dark-color, 60%) !default;
+// $border-color-dark: darken($border-color, 10%) !default;
+// $bg-color: lighten($dark-color, 66%) !default;
+// $bg-color-dark: darken($bg-color, 3%) !default;
+// $bg-color-light: $light-color !default;
+
+// // Control colors
+// $success-color: #32b643 !default;
+// $warning-color: #ffb700 !default;
+// $error-color: #e85600 !default;
+
+// // Other colors
+// $code-color: #d73e48 !default;
+// $highlight-color: #ffe9b3 !default;
+// $body-bg: $bg-color-light !default;
+// $body-font-color: lighten($dark-color, 5%) !default;
+// $link-color: $primary-color !default;
+// $link-color-dark: darken($link-color, 10%) !default;
+// $link-color-light: lighten($link-color, 10%) !default;
+
+// DARKMODE
+$primary-color: lighten(#5755d9, 10%);
+$secondary-color: rgba($primary-color, 0.15);
+$dark-color: darken(#ffffff, 20%);
+$light-color: darken(#454d5d, 10%);
+$gray-color: lighten($dark-color, 0%);
+$gray-color-dark: lighten($gray-color, 15%);
+$border-color: darken(#ffffff, 30%);
+$bg-color: darken($light-color, 5%);
+$bg-color-light: $light-color;
+$body-font-color: lighten($dark-color, 25%);
+
+$table-border-color: #aaa;
+$table-border-separator-color: #666;
+$table-th-back-color: lighten($light-color, 3%);
+$table-th-fore-color: $body-font-color;
+$table-td-back-color: lighten($light-color, 7%);
+$table-td-fore-color: $body-font-color;
+$table-td-alt-back-color: lighten($light-color, 5%);

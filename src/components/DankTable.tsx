@@ -1,21 +1,24 @@
 import * as React from "react";
 import { hot } from "react-hot-loader";
-import SpectrePagination from "./SpectrePagination";
+import SpectrePagination from "./spectre/SpectrePagination";
+import "./DankTable.scss";
 
-export interface DankColumnProps {
+export interface DankTableColumnProps {
   name: string
   title?: string
   flex?: string
   filter?: "input" | "select"
-  render?: (cell: any, row: any) => React.ReactNode
+  // render?: (cell: any, row: any) => React.ReactNode
   onSort?: (dir: -1 | 1, a: any, b: any) => number
+
+  children?: ((cell: any, row: any) => React.ReactNode) | never[]
 
   filterOptions?: string[]
   filterStr?: string
   sortDir?: 1 | -1
 }
 
-export class DankColumn extends React.PureComponent<DankColumnProps> { }
+export class DankTableColumn extends React.PureComponent<DankTableColumnProps> { }
 
 interface Props {
   data: any[]
@@ -32,10 +35,10 @@ interface State {
 }
 
 class DankTable extends React.PureComponent<Props, State> {
-  columns = [] as DankColumnProps[]
+  columns = [] as DankTableColumnProps[]
   pageSize = 25
   pageCount = 0
-  
+
   constructor(props: Props) {
     super(props)
 
@@ -48,7 +51,7 @@ class DankTable extends React.PureComponent<Props, State> {
     this.updateColumns()
   }
 
-  onColTitleClick = (col: DankColumnProps) => {
+  onColTitleClick = (col: DankTableColumnProps) => {
     const sortDir = col.sortDir
 
     for (const col of this.columns) {
@@ -66,14 +69,14 @@ class DankTable extends React.PureComponent<Props, State> {
     this.forceUpdate()
   }
 
-  onColFilterChange = (col: DankColumnProps, target: EventTarget) => {
+  onColFilterChange = (col: DankTableColumnProps, target: EventTarget) => {
     col.filterStr = (target as HTMLInputElement | HTMLSelectElement).value
 
     this.forceUpdate()
   }
 
   updateColumns() {
-    const columns = [] as DankColumnProps[]
+    const columns = [] as DankTableColumnProps[]
 
     React.Children.forEach(this.props.children, child => {
       if (typeof child === "object") {
@@ -158,7 +161,7 @@ class DankTable extends React.PureComponent<Props, State> {
     const index = this.pageSize * this.state.page
 
     this.updatePageCount(data)
-    
+
     return data.slice(index, index + this.pageSize)
   }
 
@@ -224,7 +227,7 @@ class DankTable extends React.PureComponent<Props, State> {
     this.pageCount = Math.ceil(data.length / this.pageSize)
   }
 
-  getStringifiedCell(row: any, col: DankColumnProps) {
+  getStringifiedCell(row: any, col: DankTableColumnProps) {
     const cell = row[col.name]
 
     if (cell === null || cell === undefined) {
@@ -234,9 +237,9 @@ class DankTable extends React.PureComponent<Props, State> {
     }
   }
 
-  getRenderedCell(row: any, col: DankColumnProps) {
-    if (col.render) {
-      return col.render(row[col.name], row)
+  getRenderedCell(row: any, col: DankTableColumnProps) {
+    if (typeof col.children === "function") {
+      return col.children(row[col.name], row)
     } else {
       return row[col.name]
     }
@@ -252,7 +255,7 @@ class DankTable extends React.PureComponent<Props, State> {
     return false
   }
 
-  getRenderedColFilter(col: DankColumnProps) {
+  getRenderedColFilter(col: DankTableColumnProps) {
     if (col.filter === "input") {
       return (
         <input className="form-input input-sm" onKeyUp={ev => this.onColFilterChange(col, ev.target)} />

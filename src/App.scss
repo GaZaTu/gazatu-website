@@ -1,46 +1,4 @@
-// edit variables
-// Core colors
-$primary-color: lighten(#5755d9, 10%);
-// $primary-color-dark: darken($primary-color, 3%);
-// $primary-color-light: lighten($primary-color, 3%);
-$secondary-color: rgba($primary-color, 0.15);
-// $secondary-color-dark: darken($secondary-color, 3%);
-// $secondary-color-light: lighten($secondary-color, 3%);
-
-// // Gray colors
-$dark-color: darken(#ffffff, 20%);
-$light-color: darken(#454d5d, 10%);
-$gray-color: lighten($dark-color, 0%);
-$gray-color-dark: lighten($gray-color, 15%);
-// $gray-color-light: lighten($gray-color, 20%);
-
-$border-color: darken(#ffffff, 30%);
-// $border-color-dark: darken($border-color, 10%);
-$bg-color: darken($light-color, 5%);
-// $bg-color-dark: darken($bg-color, 3%);
-$bg-color-light: $light-color;
-
-// // Control colors
-// $success-color: #32b643;
-// $warning-color: #ffb700;
-// $error-color: #e85600;
-
-// // Other colors
-// $code-color: #d73e48;
-// $highlight-color: #ffe9b3;
-// $body-bg: $bg-color-light;
-$body-font-color: lighten($dark-color, 25%);
-// $link-color: $primary-color;
-// $link-color-dark: darken($link-color, 10%);
-// $link-color-light: lighten($link-color, 10%);
-
-$table-border-color: #aaa;
-$table-border-separator-color: #666;
-$table-th-back-color: lighten($light-color, 3%);
-$table-th-fore-color: $body-font-color;
-$table-td-back-color: lighten($light-color, 7%);
-$table-td-fore-color: $body-font-color;
-$table-td-alt-back-color: lighten($light-color, 5%);
+@import "./styles/variables";
 
 // import libs
 // Variables and mixins
@@ -58,9 +16,9 @@ $table-td-alt-back-color: lighten($light-color, 5%);
 // @import "~spectre.css/src/tables";
 @import "~spectre.css/src/buttons";
 @import "~spectre.css/src/forms";
-@import "~spectre.css/src/labels";
-@import "~spectre.css/src/codes";
-@import "~spectre.css/src/media";
+// @import "~spectre.css/src/labels";
+// @import "~spectre.css/src/codes";
+// @import "~spectre.css/src/media";
 
 // Layout
 @import "~spectre.css/src/layout";
@@ -72,21 +30,21 @@ $table-td-alt-back-color: lighten($light-color, 5%);
 // @import "~spectre.css/src/badges";
 // @import "~spectre.css/src/breadcrumbs";
 // @import "~spectre.css/src/bars";
-@import "~spectre.css/src/cards";
+// @import "~spectre.css/src/cards";
 @import "~spectre.css/src/chips";
 // @import "~spectre.css/src/dropdowns";
 @import "~spectre.css/src/empty";
 @import "~spectre.css/src/menus";
 @import "~spectre.css/src/modals";
 @import "~spectre.css/src/navs";
-@import "~spectre.css/src/pagination";
+// @import "~spectre.css/src/pagination";
 // @import "~spectre.css/src/panels";
 // @import "~spectre.css/src/popovers";
 // @import "~spectre.css/src/steps";
 // @import "~spectre.css/src/tabs";
-@import "~spectre.css/src/tiles";
+// @import "~spectre.css/src/tiles";
 @import "~spectre.css/src/toasts";
-// @import "~spectre.css/src/tooltips";
+@import "~spectre.css/src/tooltips";
 
 // Utility classes
 @import "~spectre.css/src/animations";
@@ -107,16 +65,6 @@ $table-td-alt-back-color: lighten($light-color, 5%);
 // @import "~spectre.css/src/timelines";
 
 @import "~spectre.css/src/spectre-icons";
-@import "./styles/responsive-table";
-
-// fix some spectre styles
-select.form-select {
-  background-color: $bg-color-light !important;
-}
-
-.nav .nav-item.active > a {
-  color: darken($gray-color-dark, 30%);
-}
 
 // style App
 .app-navbar {
@@ -127,30 +75,43 @@ select.form-select {
   z-index: 100;
 
   .btn {
-    position: absolute;
-    right: 0.5rem;
-    top: 0.5rem;
+    margin-right: 0.4rem;
 
     &.off-canvas-toggle {
       font-size: 1rem;
     }
   }
-}
 
-.app-sidebar.off-canvas-sidebar {
-  min-width: 12rem;
-
-  &:not(.active) {
-    // height: stretch;
-    background: unset;
+  .off-canvas-toggle {
+    position: unset;
+    margin-left: 0.4rem;
   }
 }
 
 .app-brand {
-  color: $primary-color;
-  left: 1.5rem;
-  position: fixed;
-  top: .85rem;
+  color: $primary-color !important;
+  font-size: 0.9rem;
+  text-decoration: none;
+  height: 2rem;
+  overflow: hidden;
+
+  a {
+    color: $primary-color !important;
+  }
+
+  img {
+    width: 8rem;
+  }
+}
+
+.app-sidebar.off-canvas-sidebar {
+  min-width: 13rem;
+
+  .app-brand {
+    left: 1.5rem;
+    position: fixed;
+    top: .85rem;
+  }
 }
 
 .app-nav {
@@ -159,16 +120,64 @@ select.form-select {
   padding: .5rem 1.5rem;
   position: fixed;
   top: 3.5rem;
-  // width: 12rem;
 }
 
 .app-content.off-canvas-content {
-  padding: .4rem .4rem .4rem .4rem;
+  min-height: 100vh;
+  padding: .0rem .4rem .4rem .4rem;
+}
+
+.app-content .s-title,
+.app-content .s-subtitle {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  line-height: 1.8rem;
+  margin-bottom: 0;
+  background-color: $body-bg;
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+
+.app-content .s-title::before,
+.app-content .s-subtitle::before {
+  background: $bg-color-light;
+  bottom: 0;
+  content: "";
+  display: block;
+  position: absolute;
+  top: -5px;
+  z-index: -1;
+}
+
+.has-success .form-input,
+.has-success .form-select,
+.form-input.is-success,
+.form-select.is-success {
+  background: rgba(0, 255, 0, 0.05);
+}
+
+.has-error .form-input,
+.has-error .form-select,
+.form-input.is-error,
+.form-select.is-error {
+  background: rgba(255, 0, 0, 0.05);
+}
+
+.input-group-addon.input-group-icon {
+  line-height: normal;
+  cursor: pointer;
 }
 
 @media (max-width: $size-lg) {
   .app-navbar {
-    background: rgba(248, 249, 250, .15);
+    background: $bg-color;
     left: 0;
+  }
+
+  .app-content .s-title,
+  .app-content .s-subtitle {
+    padding-top: 3rem;
+    position: static;
   }
 }

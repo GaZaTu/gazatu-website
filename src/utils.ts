@@ -103,7 +103,7 @@ type Queryfy<T> = {
 
 export class ApiEndpointGroup<TData, TQuery = TData | { [key: string]: any }> {
   path: string
-  
+
   constructor(path: string) {
     this.path = path
   }
@@ -112,24 +112,65 @@ export class ApiEndpointGroup<TData, TQuery = TData | { [key: string]: any }> {
     return api.get(this.path, { params: query }).then(res => res.data as TData[])
   }
 
-  getById(id: string) {
-    return api.get(`${this.path}/${id}`).then(res => res.data as TData)
-  }
-
   post(data: Partial<TData>) {
     return api.post(this.path, data).then(res => res.data as TData)
   }
 
-  put(id: string, data: Partial<TData>) {
-    return api.put(`${this.path}/${id}`, data)
-  }
-
-  delete(id: string) {
-    return api.delete(`${this.path}/${id}`)
+  id(id: string) {
+    return {
+      get: () => {
+        return api.get(`${this.path}/${id}`).then(res => res.data as TData)
+      },
+      put: (data: Partial<TData>) => {
+        return api.put(`${this.path}/${id}`, data)
+      },
+      delete: () => {
+        return api.delete(`${this.path}/${id}`)
+      },
+    }
   }
 }
 
-type ProtoOf<T> = Pick<T, keyof T>
+export type ProtoOf<T> = Pick<T, keyof T>
+
+export interface Subscription {
+  unsubscribe(): void
+}
+
+export interface Subscribable<T> {
+  subscribe(listener: (value: T) => any): Subscription
+}
+
+interface SubscriptionsState {
+  subscriptions?: Subscription[]
+}
+
+export function subscribe<Self extends React.Component<any, SubscriptionsState>, R>(getSubscribable: (self: Self) => Subscribable<R>) {
+  return <T extends Self, K extends keyof T>
+    (proto: ProtoOf<T>, key: K, descriptor: TypedPropertyDescriptor<(...args: any[]) => any>) => {
+    const method = descriptor.value!
+    const componentDidMount = proto.componentDidMount
+    const componentWillUnmount = proto.componentWillUnmount
+
+    const data = {} as any
+
+    proto.componentDidMount = function (this: T) {
+      data.subscription = getSubscribable(this).subscribe(method.bind(this))
+
+      if (componentDidMount) {
+        componentDidMount.apply(this)
+      }
+    }
+
+    proto.componentWillUnmount = function (this: T) {
+      data.subscription.unsubscribe()
+
+      if (componentWillUnmount) {
+        componentWillUnmount.apply(this)
+      }
+    }
+  }
+}
 
 interface LoadingState {
   loading: boolean
@@ -150,26 +191,26 @@ export const loading = <T extends React.Component<any, LoadingState>, K extends 
   }
 }
 
-export interface Subscription {
-  unsubscribe(): void
-}
-
-export function hotkey(def: string, listener: (ev: KeyboardEvent) => any) {
+export function hotkey(def: string) {
   const defs = def.split("+")
   const keys = defs.filter(key => (key !== "shift") && (key !== "ctrl") && (key !== "alt"))
   const shift = defs.includes("shift")
   const ctrl = defs.includes("ctrl")
   const alt = defs.includes("alt")
 
-  const realListener = (ev: KeyboardEvent) => {
-    if (ev.shiftKey === shift && ev.ctrlKey === ctrl && ev.altKey === alt && keys.includes(ev.key)) {
-      listener(ev)
-    }
-  }
-
-  window.addEventListener("keydown", realListener)
-
   return {
-    unsubscribe: () => window.removeEventListener("keydown", realListener)
-  } as Subscription
+    subscribe: listener => {
+      const realListener = (ev: KeyboardEvent) => {
+        if (ev.shiftKey === shift && ev.ctrlKey === ctrl && ev.altKey === alt && keys.includes(ev.key)) {
+          listener(ev)
+        }
+      }
+
+      window.addEventListener("keydown", realListener)
+
+      return {
+        unsubscribe: () => window.removeEventListener("keydown", realListener),
+      } as Subscription
+    },
+  } as Subscribable<KeyboardEvent>
 }

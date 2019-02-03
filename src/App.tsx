@@ -6,11 +6,11 @@ import AppNavItemLink from "./components/AppNavItemLink";
 import AppNavItemList from "./components/AppNavItemList";
 import LazyRoute from "./components/LazyRoute";
 import "./register-service-worker";
+import SpectreToastContainer from "./components/spectre/SpectreToastContainer";
+import SpectreModalContainer from "./components/spectre/SpectreModalContainer";
+import SpectreMenuContainer from "./components/spectre/SpectreMenuContainer";
 import { authorization } from "./utils";
 import { observer } from "mobx-react";
-import SpectreToastContainer from "./components/SpectreToastContainer";
-import SpectreModalContainer from "./components/SpectreModalContainer";
-import SpectreMenuContainer from "./components/SpectreMenuContainer";
 
 interface Props { }
 
@@ -33,29 +33,39 @@ class App extends React.Component<Props, State> {
       sidebarActive: !this.state.sidebarActive,
     })
   }
-  
+
   render() {
     return (
       <HashRouter>
         <div className="App off-canvas off-canvas-sidebar-show">
-          <div className="app-navbar">
-            <a className="off-canvas-toggle btn btn-link btn-action" onClick={this.toggleSidebar}>
-              <i className="icon icon-menu" />
-            </a>
+          <header className="navbar app-navbar">
+            <section className="navbar-section">
+              <a className="off-canvas-toggle btn btn-link btn-action" onClick={this.toggleSidebar}>
+                <i className="icon icon-menu" />
+              </a>
 
-            <a className="btn btn-primary" href="https://github.com/GaZaTu/gazatu-website" target="_blank" rel="noreferrer">GitHub</a>
-          </div>
+              <a href="/" className="navbar-brand mr-2 show-lg app-brand">
+                <img className="img-responsive" src="/img/gazatu-xyz.svg" />
+              </a>
+            </section>
+
+            <section className="navbar-section">
+              <a className="btn btn-primary" href="https://github.com/GaZaTu/gazatu-website" target="_blank" rel="noreferrer">GitHub</a>
+            </section>
+          </header>
 
           <div className={`app-sidebar off-canvas-sidebar ${this.state.sidebarActive ? "active" : ""}`}>
             <div className="app-brand">
-              <a href="#/">
-                <img className="img-responsive" style={{ width: "11em" }} src="/img/gazatu-xyz.svg" />
+              <a href="/">
+                <img className="img-responsive" src="/img/gazatu-xyz.svg" />
               </a>
             </div>
+
             <div className="app-nav">
               <ul className="nav">
                 <AppNavItemLink to="/">Start</AppNavItemLink>
                 <AppNavItemList title="Trivia" matchStartsWith="/trivia">
+                  <AppNavItemLink to="/trivia/statistics">Statistics</AppNavItemLink>
                   <AppNavItemLink to="/trivia/questions/new">Submit</AppNavItemLink>
                   <AppNavItemLink to="/trivia/questions">Questions</AppNavItemLink>
                   {authorization.hasPermission("trivia") && [
@@ -84,6 +94,7 @@ class App extends React.Component<Props, State> {
                 (<LazyRoute key={1} exact path="/trivia/reports" provider={() => import("./views/TriviaReportsView")} />),
                 (<LazyRoute key={2} exact path="/trivia/reported-questions" provider={() => import("./views/TriviaReportedQuestionsView")} />),
               ]}
+              <LazyRoute exact path="/trivia/statistics" provider={() => import("./views/TriviaStatisticsView")} />
               {authorization.hasPermission("users") && (
                 <LazyRoute exact path="/users" provider={() => import("./views/UsersView")} />
               )}
@@ -97,12 +108,12 @@ class App extends React.Component<Props, State> {
                 </div>
               )} />
             </Switch>
+            {/* <footer style={{ bottom: 0, position: "fixed" }}>
+              <p>Test Footer</p>
+            </footer> */}
             <SpectreModalContainer />
             <SpectreToastContainer />
             <SpectreMenuContainer />
-            {/* <div style={{ bottom: 0, position: "fixed" }}>
-              <p>Test Footer</p>
-            </div> */}
           </div>
         </div>
       </HashRouter>

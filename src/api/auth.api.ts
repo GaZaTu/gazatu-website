@@ -21,10 +21,8 @@ export interface AuthResult {
   token: string
 }
 
-const usersApi = new ApiEndpointGroup<UserData>("/users")
-
 export const authApi = {
-  users: usersApi,
+  users: new ApiEndpointGroup<UserData>("/users"),
   register: (data: AuthData) => api.post("/register", data).then(res => res.data as UserData),
   authenticate: (data: AuthData) => api.post("/authenticate", data).then(res => res.data as AuthResult),
   permissions: () => api.get("/permissions").then(res => res.data as string[]),
