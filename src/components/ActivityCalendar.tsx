@@ -80,7 +80,7 @@ class AcitivityCalendarDay extends React.PureComponent<AcitivityCalendarDayProps
 
   render() {
     const day = new Date(this.props.year, this.props.month, this.props.date)
-    const breakpointNumbers = Object.keys(this.props.breakpoints).map(k => Number(k)).sort()
+    const breakpointNumbers = Object.keys(this.props.breakpoints).map(k => Number(k)).sort((a, b) => a - b)
 
     let backgroundColor = ""
 
