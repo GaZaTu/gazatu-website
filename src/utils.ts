@@ -215,11 +215,11 @@ export function hotkey(def: string) {
   } as Subscribable<KeyboardEvent>
 }
 
-export function reactNodeIsComponent<C extends { new(...args: any[]): React.Component }>(node: React.ReactNode, constructor: C): node is { props: any } {
+export function reactNodeIsComponent<C extends { new(...args: any[]): React.Component }>(node: React.ReactNode, constructor: C): node is React.ReactElement<any> {
   if (typeof node === "object") {
     const elem = node as React.ReactElement<any>
 
-    if ((elem.type === constructor) || ((elem.type as any).prototype instanceof constructor)) {
+    if (elem.type === constructor || (typeof elem.type === "function" && elem.type.prototype instanceof constructor)) {
       return true
     }
   }
