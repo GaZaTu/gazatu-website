@@ -56,7 +56,7 @@ class SpectreAutoComplete extends React.PureComponent<Props, State> {
   handleNewTagKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === " ") {
       event.preventDefault()
-      
+
       this.add(this.state.newTag)
       this.setState({
         newTag: "",
@@ -88,7 +88,7 @@ class SpectreAutoComplete extends React.PureComponent<Props, State> {
             </div>
           ))}
           {!this.props.readOnly && (
-            <input className="form-input" type="text" placeholder="typing here" value={this.state.newTag} onChange={this.handleNewTagChange} onKeyDown={this.handleNewTagKeyDown} />
+            <input className="form-input" type="text" placeholder="..." value={this.state.newTag} onChange={this.handleNewTagChange} onKeyDown={this.handleNewTagKeyDown} />
           )}
         </div>
 

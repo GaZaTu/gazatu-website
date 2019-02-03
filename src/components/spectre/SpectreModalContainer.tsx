@@ -62,7 +62,7 @@ class SpectreModalContainer extends React.PureComponent<Props, State> {
                 )}
                 <div className="modal-title h5">{this.state.modal.title}</div>
               </div>
-              
+
               <div className="modal-body">
                 <div className="content">
                   {this.state.modal.body}
@@ -92,7 +92,7 @@ export function showModal(options: Modal) {
 
 export async function showConfirmation(what: React.ReactNode) {
   let ok = false
-  
+
   const handleOk = () => {
     ok = true
     modal.hide()
@@ -109,14 +109,14 @@ export async function showConfirmation(what: React.ReactNode) {
         <button className="btn btn-success" onClick={handleOk}>
           <i className="icon icon-check" />
         </button>
-      
+
         <button className="btn btn-error" onClick={handleCancel}>
           <i className="icon icon-cross" />
         </button>
       </div>
     ))(),
   })
-  
+
   await modal.done
 
   return ok

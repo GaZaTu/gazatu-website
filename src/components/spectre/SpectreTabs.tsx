@@ -49,7 +49,7 @@ class SpectreTabs extends React.PureComponent<Props, State> {
     React.Children.forEach(this.props.children, child => {
       if (typeof child === "object") {
         const childAsElem = child as React.ReactElement<any>
-        
+
         if (typeof childAsElem.type === "function") {
           tabs.push(childAsElem.props)
         }
