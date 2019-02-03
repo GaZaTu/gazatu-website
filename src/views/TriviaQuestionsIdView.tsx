@@ -4,17 +4,26 @@ import { RouteComponentProps } from "react-router";
 import { Formik, Form, Field, FormikActions } from "formik";
 import { QuestionData, triviaApi, QuestionReportData } from "../api/trivia.api";
 import { loading, authorization } from "../utils";
-import { toaster } from "../components/SpectreToastContainer";
+import { toaster } from "../components/spectre/SpectreToastContainer";
 import * as idbKeyval from "idb-keyval";
-import DankTable, { DankColumn, tableRenderDate, tableSortDate } from "../components/DankTable";
-import { showConfirmation } from "../components/SpectreModalContainer";
-import SpectreButton from "../components/SpectreButton";
+import DankTable, { DankTableColumn, tableRenderDate, tableSortDate } from "../components/DankTable";
+import { showConfirmation } from "../components/spectre/SpectreModalContainer";
+import SpectreButton from "../components/spectre/SpectreButton";
+import SpectreButtonGroup from "../components/spectre/SpectreButtonGroup";
+import SpectreIcon from "../components/spectre/SpectreIcon";
+import SpectreFormGroup from "../components/spectre/SpectreFormGroup";
+import SpectreFormikInput from "../components/spectre-formik/SpectreFormikInput";
+import SpectreFormikForm from "../components/spectre-formik/SpectreFormikForm";
+import SpectreFormikButton from "../components/spectre-formik/SpectreFormikButton";
+import SpectreFormikFormGroup from "../components/spectre-formik/SpectreFormikFormGroup";
+import SpectreInput from "../components/spectre/SpectreInput";
+import SpectreForm from "../components/spectre/SpectreForm";
 
 interface RouteParams {
   id: string
 }
 
-type Props = RouteComponentProps<RouteParams>
+interface Props extends RouteComponentProps<RouteParams> { }
 
 interface State {
   loading: boolean
@@ -76,13 +85,13 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
   async loadData() {
     if (this.isNew) {
       const submitData = await idbKeyval.get<any>("TriviaSubmitData")
-      
+
       this.setState({
         data: Object.assign(triviaApi.emptyQuestion(), submitData),
       })
     } else {
       this.setState({
-        data: await triviaApi.questions.getById(this.id),
+        data: await triviaApi.questions.id(this.id).get(),
       })
     }
   }
@@ -114,7 +123,7 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
         this.id = res._id
       }
     } else {
-      await triviaApi.questions.put(this.id, data)
+      await triviaApi.questions.id(this.id).put(data)
 
       if (this.state.newAfterSave) {
         this.id = "new"
@@ -146,10 +155,6 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
     this.load()
   }
 
-  isLoading(form?: { isSubmitting: boolean }) {
-    return (this.state.loading || (form && form.isSubmitting))
-  }
-
   handleSubmit = async (data: Partial<QuestionData>, actions: FormikActions<Partial<QuestionData>>) => {
     this.setState({ data })
 
@@ -172,7 +177,7 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
     const accepted = await showConfirmation("Delete?")
 
     if (accepted) {
-      await triviaApi.questions.delete(this.id)
+      await triviaApi.questions.id(this.id).delete()
       this.props.history.push("/trivia/questions")
     }
   }
@@ -183,7 +188,7 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
     if (accepted) {
       this.state.data.verified = true
 
-      await triviaApi.questions.put(this.id, this.state.data)
+      await triviaApi.questions.id(this.id).put(this.state.data)
       await this.load()
     }
   }
@@ -195,23 +200,17 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
     }
 
     const accepted = await showConfirmation(
-      <div className="form-horizontal">
+      <SpectreForm>
         <h5>Report question</h5>
 
-        <div className="form-group">
-          <div className="col-12">
-            <label className="form-label">Username*</label>
-            <input className="form-input" placeholder="Username" required onChange={ev => data.submitter = ev.target.value} />
-          </div>
-        </div>
+        <SpectreFormGroup label="Username*">
+          <SpectreInput placeholder="Username" onChange={ev => data.submitter = ev.target.value} required />
+        </SpectreFormGroup>
 
-        <div className="form-group">
-          <div className="col-12">
-            <label className="form-label">Reason*</label>
-            <input className="form-input" placeholder="Reason" required onChange={ev => data.message = ev.target.value} />
-          </div>
-        </div>
-      </div>
+        <SpectreFormGroup label="Reason*">
+          <SpectreInput placeholder="Reason" onChange={ev => data.message = ev.target.value} required />
+        </SpectreFormGroup>
+      </SpectreForm>
     )
 
     if (accepted) {
@@ -223,94 +222,79 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
   render() {
     return (
       <div>
-        <h2>Question</h2>
+        <h3 className="s-title">Question</h3>
         <Formik
           enableReinitialize
           initialValues={this.state.data}
           onSubmit={this.handleSubmit}
         >
           {form => (
-            <Form className="form-horizontal">
-              <div className="btn-group btn-group-block col-5 col-sm-12 col-ml-auto">
+            <SpectreFormikForm formik={form} horizontal>
+              <SpectreButtonGroup className="col-5 col-sm-12 col-ml-auto" style={{ paddingBottom: "1rem" }} block>
                 {this.state.hasTriviaPermission && (
-                  <SpectreButton type="button" color="error" loading={this.isLoading(form)} disabled={this.isNew} onClick={this.handleDelete}>
-                    <i className="icon icon-delete" />
-                  </SpectreButton>
-                )}
-                
-                {this.state.hasTriviaPermission && (
-                  <SpectreButton type="button" color="success" loading={this.isLoading(form)} disabled={this.isNew || this.state.data.verified} onClick={this.handleVerify}>
-                    <i className="icon icon-emoji" />
-                  </SpectreButton>
+                  <SpectreFormikButton formik={form} type="button" kind="error" loading={this.state.loading} disabled={this.isNew} onClick={this.handleDelete}>
+                    <SpectreIcon icon="delete" />
+                  </SpectreFormikButton>
                 )}
 
-                <SpectreButton type="button" loading={this.isLoading(form)} disabled={this.isNew} onClick={this.handleReport}>
-                  <i className="icon icon-flag" />
-                </SpectreButton>
+                {this.state.hasTriviaPermission && (
+                  <SpectreFormikButton formik={form} type="button" kind="success" loading={this.state.loading} disabled={this.isNew || this.state.data.verified} onClick={this.handleVerify}>
+                    <SpectreIcon icon="emoji" />
+                  </SpectreFormikButton>
+                )}
 
-                <SpectreButton type="submit" loading={this.isLoading(form)} disabled={this.state.readOnly} onClick={this.handleSaveAndNew}>
-                  <i className="icon icon-check" />
-                  <i className="icon icon-plus" />
-                </SpectreButton>
+                <SpectreFormikButton formik={form} type="button" loading={this.state.loading} disabled={this.isNew} onClick={this.handleReport}>
+                  <SpectreIcon icon="flag" />
+                </SpectreFormikButton>
 
-                <SpectreButton type="submit" loading={this.isLoading(form)} disabled={this.state.readOnly}>
-                  <i className="icon icon-check" />
-                </SpectreButton>
-              </div>
+                <SpectreFormikButton formik={form} type="submit" loading={this.state.loading} disabled={this.state.readOnly} onClick={this.handleSaveAndNew}>
+                  <SpectreIcon icon="check" />
+                  <SpectreIcon icon="plus" />
+                </SpectreFormikButton>
 
-              <div className="form-group">
-                <div className="col-4 col-sm-12">
-                  <label className="form-label">Category*</label>
-                  <Field className="form-input" name="category" placeholder="Category" required list="categories" readOnly={this.state.readOnly} />
-                  <datalist id="categories">
-                    {this.state.categories.map(category => (
-                      <option key={category}>{category}</option>
-                    ))}
-                  </datalist>
-                </div>
-              </div>
+                <SpectreFormikButton formik={form} type="submit" loading={this.state.loading} disabled={this.state.readOnly}>
+                  <SpectreIcon icon="check" />
+                </SpectreFormikButton>
+              </SpectreButtonGroup>
 
-              <div className="form-group">
-                <div className="col-9 col-sm-12">
-                  <label className="form-label">Question*</label>
-                  <Field className="form-input" name="question" placeholder="Question" required readOnly={this.state.readOnly} />
-                </div>
-              </div>
+              <SpectreFormikFormGroup name="category" label="Category*">
+                <SpectreFormikInput placeholder="Category" options={this.state.categories} readOnly={this.state.readOnly} required />
+              </SpectreFormikFormGroup>
 
-              <div className="form-group">
-                <div className="col-6 col-sm-12">
-                  <label className="form-label">Answer*</label>
-                  <Field className="form-input" name="answer" placeholder="Answer" required readOnly={this.state.readOnly} />
-                </div>
-              </div>
+              <SpectreFormikFormGroup name="question" label="Question*">
+                <SpectreFormikInput placeholder="Question" readOnly={this.state.readOnly} required />
+              </SpectreFormikFormGroup>
 
-              <div className="form-group">
-                <div className="col-6 col-sm-12">
-                  <label className="form-label">First hint</label>
-                  <Field className="form-input" name="hint1" placeholder="First hint" readOnly={this.state.readOnly} />
-                </div>
+              <SpectreFormikFormGroup name="answer" label="Answer*">
+                <SpectreFormikInput placeholder="Answer" readOnly={this.state.readOnly} required />
+              </SpectreFormikFormGroup>
 
-                <div className="col-6 col-sm-12">
-                  <label className="form-label">Second hint</label>
-                  <Field className="form-input" name="hint2" placeholder="Second hint" readOnly={this.state.readOnly} />
-                </div>
-              </div>
+              <SpectreFormikFormGroup name="hint1" label="First hint">
+                <SpectreFormikInput placeholder="First hint" readOnly={this.state.readOnly} />
+              </SpectreFormikFormGroup>
 
-              <div className="form-group">
-                <div className="col-4 col-sm-12">
-                  <label className="form-label">Username</label>
-                  <Field className="form-input" name="submitter" placeholder="Username" readOnly={this.state.readOnly} />
-                </div>
-              </div>
-            </Form>
+              <SpectreFormikFormGroup name="hint2" label="Second hint">
+                <SpectreFormikInput placeholder="Second hint" readOnly={this.state.readOnly} />
+              </SpectreFormikFormGroup>
+
+              <SpectreFormikFormGroup name="submitter" label="Username">
+                <SpectreFormikInput placeholder="Username" readOnly={this.state.readOnly} />
+              </SpectreFormikFormGroup>
+            </SpectreFormikForm>
           )}
         </Formik>
 
         {this.state.showReports && (
           <DankTable data={this.state.reports} style={{ maxHeight: "unset", overflow: "unset" }} caption="Reports">
-            <DankColumn name="message" />
-            <DankColumn name="submitter" />
-            <DankColumn name="updatedAt" render={tableRenderDate} onSort={tableSortDate} />
+            <DankTableColumn name="message">
+            </DankTableColumn>
+
+            <DankTableColumn name="submitter">
+            </DankTableColumn>
+
+            <DankTableColumn name="updatedAt" onSort={tableSortDate}>
+              {tableRenderDate}
+            </DankTableColumn>
           </DankTable>
         )}
       </div>

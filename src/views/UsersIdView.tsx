@@ -3,17 +3,19 @@ import { hot } from "react-hot-loader";
 import { RouteComponentProps } from "react-router";
 import { Formik, Form, Field, FormikActions } from "formik";
 import { loading, authorization } from "../utils";
-import { toaster } from "../components/SpectreToastContainer";
-import { showConfirmation } from "../components/SpectreModalContainer";
+import { toaster } from "../components/spectre/SpectreToastContainer";
+import { showConfirmation } from "../components/spectre/SpectreModalContainer";
 import { UserData, authApi } from "../api/auth.api";
-import SpectreAutoComplete from "../components/SpectreAutoComplete";
-import SpectreButton from "../components/SpectreButton";
+import SpectreAutoComplete from "../components/spectre/SpectreAutoComplete";
+import SpectreButton from "../components/spectre/SpectreButton";
+import SpectreFormGroup from "../components/spectre/SpectreFormGroup";
+import SpectreFormikInput from "../components/spectre-formik/SpectreFormikInput";
 
 interface RouteParams {
   id: string
 }
 
-type Props = RouteComponentProps<RouteParams>
+interface Props extends RouteComponentProps<RouteParams> { }
 
 interface State {
   loading: boolean
@@ -64,7 +66,7 @@ class UsersIdView extends React.PureComponent<Props, State> {
 
   async loadData() {
     this.setState({
-      data: await authApi.users.getById(this.id),
+      data: await authApi.users.id(this.id).get(),
     })
   }
 
@@ -113,8 +115,8 @@ class UsersIdView extends React.PureComponent<Props, State> {
     const accepted = await showConfirmation("Delete?")
 
     if (accepted) {
-      await authApi.users.delete(this.id)
-      
+      await authApi.users.id(this.id).delete()
+
       if (authorization.id === this.id) {
         this.props.history.push("/logout")
       } else {
@@ -167,12 +169,9 @@ class UsersIdView extends React.PureComponent<Props, State> {
                 </SpectreButton>
               </div>
 
-              <div className="form-group">
-                <div className="col-4 col-sm-12">
-                  <label className="form-label">Username</label>
-                  <Field className="form-input" name="username" placeholder="Username" readOnly />
-                </div>
-              </div>
+              <SpectreFormGroup label="Username">
+                <SpectreFormikInput formik={form} name="username" placeholder="Username" readOnly />
+              </SpectreFormGroup>
             </Form>
           )}
         </Formik>

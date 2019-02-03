@@ -15,7 +15,7 @@ class AppNavItemList extends React.Component<Props> {
 
     return (
       <li className={`nav-item ${active && "active"}`}>
-        {this.props.titleTo ? (<Link to={this.props.titleTo}>{this.props.title}</Link>) : (<a>{this.props.title}</a>)}
+        {this.props.titleTo ? (<Link to={this.props.titleTo}>{this.props.title}</Link>) : (<a style={{ pointerEvents: "none" }}>{this.props.title}</a>)}
         <ul className="nav">
           {this.props.children}
         </ul>

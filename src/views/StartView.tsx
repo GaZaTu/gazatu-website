@@ -4,7 +4,7 @@ import { RouteComponentProps } from "react-router";
 
 interface RouteParams { }
 
-type Props = RouteComponentProps<RouteParams>
+interface Props extends RouteComponentProps<RouteParams> { }
 
 interface State { }
 
@@ -17,7 +17,7 @@ class StartView extends React.PureComponent<Props, State> {
 
   render() {
     return (
-      <img className="img-responsive" src="/img/FeelsDankMan.png" />
+      <img className="img-responsive" style={{ marginLeft: 30, marginTop: 30 }} src="/img/FeelsDankMan.png" />
     )
   }
 }

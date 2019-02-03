@@ -1,13 +1,14 @@
 import * as React from "react";
 import { hot } from "react-hot-loader";
-import DankTable, { DankColumn, tableRenderDate, tableSortDate } from "../components/DankTable";
+import DankTable, { DankTableColumn, tableRenderDate, tableSortDate } from "../components/DankTable";
 import { RouteComponentProps } from "react-router";
-import { toaster } from "../components/SpectreToastContainer";
+import { toaster } from "../components/spectre/SpectreToastContainer";
 import { ReportData, triviaApi } from "../api/trivia.api";
+import SpectreIcon from "../components/spectre/SpectreIcon";
 
 interface RouteParams { }
 
-type Props = RouteComponentProps<RouteParams>
+interface Props extends RouteComponentProps<RouteParams> { }
 
 interface State {
   data: ReportData[]
@@ -39,11 +40,25 @@ class TriviaReportsView extends React.PureComponent<Props, State> {
   render() {
     return (
       <div style={{ padding: 0 }}>
-        <DankTable data={this.state.data} style={{ maxHeight: "unset", overflow: "unset" }} caption="Reports" keepHeadOnMobile>
-          <DankColumn name="" render={(_, row) => (<a href={`#/trivia/questions/${row.question}`}><i className="icon icon-share" /></a>)} />
-          <DankColumn name="message" filter="input" />
-          <DankColumn name="submitter" filter="select" />
-          <DankColumn name="updatedAt" render={tableRenderDate} onSort={tableSortDate} />
+        <h3 className="s-title">Reports</h3>
+        <DankTable data={this.state.data} style={{ maxHeight: "unset", overflow: "unset" }} keepHeadOnMobile>
+          <DankTableColumn name="">
+            {(_, row) => (
+              <a href={`#/trivia/questions/${row.question}`}>
+                <SpectreIcon icon="share" />
+              </a>
+            )}
+          </DankTableColumn>
+
+          <DankTableColumn name="message" filter="input">
+          </DankTableColumn>
+
+          <DankTableColumn name="submitter" filter="input">
+          </DankTableColumn>
+
+          <DankTableColumn name="updatedAt" onSort={tableSortDate}>
+            {tableRenderDate}
+          </DankTableColumn>
         </DankTable>
       </div>
     )

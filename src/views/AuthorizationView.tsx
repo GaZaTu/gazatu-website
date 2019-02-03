@@ -1,31 +1,28 @@
 import * as React from "react";
 import { hot } from "react-hot-loader";
-import { Formik, FormikActions, Form, Field, FormikErrors } from "formik";
+import { Formik, FormikActions, FormikErrors } from "formik";
 import { AuthData, authApi } from "../api/auth.api";
 import { authorization } from "../utils";
-import { toaster } from "../components/SpectreToastContainer";
+import { toaster } from "../components/spectre/SpectreToastContainer";
 import { RouteComponentProps } from "react-router";
-import SpectreButton from "../components/SpectreButton";
+import SpectreFormikFormGroup from "../components/spectre-formik/SpectreFormikFormGroup";
+import SpectreFormikInput from "../components/spectre-formik/SpectreFormikInput";
+import SpectreButtonGroup from "../components/spectre/SpectreButtonGroup";
+import SpectreFormikForm from "../components/spectre-formik/SpectreFormikForm";
+import SpectreDivider from "../components/spectre/SpectreDivider";
+import SpectreFormikButton from "../components/spectre-formik/SpectreFormikButton";
 
 interface RouteParams { }
 
-type Props = RouteComponentProps<RouteParams>
+interface Props extends RouteComponentProps<RouteParams> { }
 
-interface State {
-  data: AuthData
-}
+interface State { }
 
 class AuthorizationView extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props)
 
-    this.state = {
-      data: {
-        username: "",
-        password: "",
-        repeatedPassword: "",
-      },
-    }
+    this.state = { }
   }
 
   componentDidMount() {
@@ -34,7 +31,7 @@ class AuthorizationView extends React.PureComponent<Props, State> {
       this.props.history.push("/login")
     }
   }
-  
+
   handleAuthenticate = async (data: AuthData, actions: FormikActions<AuthData>) => {
     try {
       const authResult = await authApi.authenticate(data)
@@ -60,82 +57,79 @@ class AuthorizationView extends React.PureComponent<Props, State> {
     }
   }
 
+  get initialValues() {
+    return {
+      username: "",
+      password: "",
+      repeatedPassword: "",
+    }
+  }
+
   render() {
     return (
       <div>
         <h2>Authorization</h2>
-        <Formik
-          enableReinitialize
-          initialValues={this.state.data}
-          onSubmit={this.handleAuthenticate}
-        >
-          {form => (
-            <Form className="form-horizontal">
-              <div className="form-group">
-                <div className="col-6 col-sm-12">
-                  <label className="form-label">Username*</label>
-                  <Field className="form-input" name="username" placeholder="Username" required />
-                </div>
-              </div>
+        <div className="columns">
+          <Formik<AuthData>
+            enableReinitialize
+            initialValues={this.initialValues}
+            onSubmit={this.handleAuthenticate}
+          >
+            {form => (
+              <SpectreFormikForm formik={form} className="column col-md-12" horizontal>
+                <SpectreFormikFormGroup name="username" label="Username*">
+                  <SpectreFormikInput type="text" placeholder="Username" required />
+                </SpectreFormikFormGroup>
 
-              <div className="form-group">
-                <div className="col-6 col-sm-12">
-                  <label className="form-label">Password*</label>
-                  <Field className="form-input" type="password" name="password" placeholder="Password" required />
-                </div>
-              </div>
+                <SpectreFormikFormGroup name="password" label="Password*">
+                  <SpectreFormikInput type="password" placeholder="Password" required />
+                </SpectreFormikFormGroup>
 
-              <div className="btn-group btn-group-block col-1 col-sm-3">
-                <SpectreButton type="submit" loading={form.isSubmitting}>Login</SpectreButton>
-              </div>
-            </Form>
-          )}
-        </Formik>
+                <SpectreButtonGroup className="col-1 col-sm-3" block>
+                  <SpectreFormikButton formik={form} type="submit">Login</SpectreFormikButton>
+                </SpectreButtonGroup>
+              </SpectreFormikForm>
+            )}
+          </Formik>
 
-        <Formik
-          enableReinitialize
-          initialValues={this.state.data}
-          validate={(data: AuthData) => {
-            const errors = {} as FormikErrors<AuthData>
+          <SpectreDivider className="hide-md" content="OR" vertical />
+          <SpectreDivider className="show-md col-md-12" content="OR" textCenter />
 
-            if (data.password !== data.repeatedPassword) {
-              errors.repeatedPassword = "Passwords don't match"
-            }
+          <Formik<AuthData>
+            enableReinitialize
+            initialValues={this.initialValues}
+            validate={data => {
+              const errors = {} as FormikErrors<AuthData>
 
-            return errors
-          }}
-          onSubmit={this.handleRegister}
-        >
-          {form => (
-            <Form className="form-horizontal">
-              <div className="form-group">
-                <div className="col-6 col-sm-12">
-                  <label className="form-label">Username*</label>
-                  <Field className="form-input" name="username" placeholder="Username" required />
-                </div>
-              </div>
+              if (data.password !== data.repeatedPassword) {
+                errors.repeatedPassword = "Passwords don't match"
+              }
 
-              <div className="form-group">
-                <div className="col-6 col-sm-12">
-                  <label className="form-label">Password*</label>
-                  <Field className="form-input" type="password" name="password" placeholder="Password" required />
-                </div>
-              </div>
+              return errors
+            }}
+            onSubmit={this.handleRegister}
+          >
+            {form => (
+              <SpectreFormikForm formik={form} className="column col-md-12" horizontal>
+                <SpectreFormikFormGroup name="username" label="Username*">
+                  <SpectreFormikInput type="text" placeholder="Username" required />
+                </SpectreFormikFormGroup>
 
-              <div className="form-group">
-                <div className="col-6 col-sm-12">
-                  <label className="form-label">Repeat password*</label>
-                  <Field className={`form-input ${form.errors.repeatedPassword ? "is-error" : ""}`} type="password" name="repeatedPassword" placeholder="Repeat password" required />
-                  {form.errors.repeatedPassword && (<p className="form-input-hint">{form.errors.repeatedPassword}</p>)}
-                </div>
-              </div>
+                <SpectreFormikFormGroup name="password" label="Password*">
+                  <SpectreFormikInput type="password" placeholder="Password" required />
+                </SpectreFormikFormGroup>
 
-              <div className="btn-group btn-group-block col-1 col-sm-3">
-                <SpectreButton type="submit" loading={form.isSubmitting}>Register</SpectreButton>
-              </div>
-            </Form>
-          )}
-        </Formik>
+                <SpectreFormikFormGroup name="repeatedPassword" label="Repeat password*">
+                  <SpectreFormikInput type="password" placeholder="Repeat password" required />
+                </SpectreFormikFormGroup>
+
+                <SpectreButtonGroup className="col-1 col-sm-3" block>
+                  <SpectreFormikButton formik={form} type="submit">Register</SpectreFormikButton>
+                </SpectreButtonGroup>
+              </SpectreFormikForm>
+            )}
+          </Formik>
+        </div>
       </div>
     )
   }
