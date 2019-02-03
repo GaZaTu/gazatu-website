@@ -1,0 +1,14 @@
+.activity-calendar {
+  .month {
+    max-width: calc((7 * 14px) + (2 * 0.4rem));
+    line-height: normal;
+
+    .day {
+      display: inline-block;
+      height: 10px;
+      width: 10px;
+      margin-left: 2px;
+      margin-right: 2px;
+    }
+  }
+}
