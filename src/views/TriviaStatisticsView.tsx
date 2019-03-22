@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import { RouteComponentProps } from "react-router";
 import ActivityCalendar from "../components/ActivityCalendar";
 import { Statistics, triviaApi } from "../api/trivia.api";
@@ -13,7 +12,7 @@ interface State {
   statistics: Partial<Statistics>
 }
 
-class TriviaStatisticsView extends React.PureComponent<Props, State> {
+export default class TriviaStatisticsView extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props)
 
@@ -84,5 +83,3 @@ class TriviaStatisticsView extends React.PureComponent<Props, State> {
     return dates.map(d => new Date(d.createdAt))
   }
 }
-
-export default hot(module)(TriviaStatisticsView)

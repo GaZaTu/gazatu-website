@@ -31,7 +31,7 @@ interface State {
   data: RouteData[]
 }
 
-class ApiRefView extends React.PureComponent<Props, State> {
+export default class ApiRefView extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props)
 
@@ -71,8 +71,6 @@ class ApiRefView extends React.PureComponent<Props, State> {
     )
   }
 }
-
-export default hot(module)(ApiRefView)
 
 interface RouteCardProps {
   route: RouteData

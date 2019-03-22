@@ -1,16 +1,28 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import { FormikProps } from "formik";
 import SpectreInput from "../spectre/SpectreInput";
+import { SpectreFormikFormContext } from "./SpectreFormikForm";
+import { SpectreFormikFormGroupContext } from "./SpectreFormikFormGroup";
 
-interface Props extends React.ComponentProps<typeof SpectreInput> {
-  formik?: FormikProps<any>
-  name?: string
-}
+interface Props extends React.ComponentProps<typeof SpectreInput> { }
 
-class SpectreFormikInput extends React.PureComponent<Props> {
+export default class SpectreFormikInput extends React.PureComponent<Props> {
   render() {
-    const { formik, name, ...nativeProps } = this.props
+    return (
+      <SpectreFormikFormContext.Consumer>
+        {form => (
+          <SpectreFormikFormGroupContext.Consumer>
+            {formGroup => (
+              this.renderInput(form && form.formik, formGroup && formGroup.name)
+            )}
+          </SpectreFormikFormGroupContext.Consumer>
+        )}
+      </SpectreFormikFormContext.Consumer>
+    )
+  }
+
+  renderInput(formik?: FormikProps<any>, name?: string) {
+    const { ...nativeProps } = this.props
     const formikProps = (formik && name) ? {
       name: name,
       value: formik.values[name],
@@ -32,5 +44,3 @@ class SpectreFormikInput extends React.PureComponent<Props> {
     )
   }
 }
-
-export default hot(module)(SpectreFormikInput)

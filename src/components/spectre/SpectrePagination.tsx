@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 // import { hotkey, subscribe } from "../../utils";
 
 function range(start: number, end: number) {
@@ -25,7 +24,7 @@ interface Props {
   hotkeys?: boolean
 }
 
-class SpectrePagination extends React.PureComponent<Props> {
+export default class SpectrePagination extends React.PureComponent<Props> {
   render() {
     const renderItemState: RenderItemState = {
       addedLeftFiller: false,
@@ -87,5 +86,3 @@ class SpectrePagination extends React.PureComponent<Props> {
   //   }
   // }
 }
-
-export default hot(module)(SpectrePagination)

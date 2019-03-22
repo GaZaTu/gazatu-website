@@ -2,8 +2,13 @@ import Axios from "axios";
 import { observable, computed } from "mobx";
 import { AuthResult, UserData } from "./api/auth.api";
 
+// export const manifest = fetch("https://raw.githubusercontent.com/GaZaTu/gazatu-website/master/public/manifest.json").then(r => r.json())
+export const production = (process.env.NODE_ENV === "production")
+export const fontendDomain = "gazatu.xyz"
+export const backendDomain = "api.gazatu.xyz"
+
 export const api = Axios.create({
-  baseURL: (process.env.NODE_ENV === "production") ? "https://api.gazatu.xyz" : "http://localhost:8088",
+  baseURL: production ? `https://${backendDomain}` : "http://localhost:8088",
   headers: {
     post: {
       "Content-Type": "application/json",

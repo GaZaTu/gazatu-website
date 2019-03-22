@@ -1,10 +1,40 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import DankTable, { DankTableColumn, tableRenderDate, tableSortDate } from "../components/DankTable";
 import { QuestionData, triviaApi } from "../api/trivia.api";
 import { RouteComponentProps } from "react-router";
 import { toaster } from "../components/spectre/SpectreToastContainer";
 import SpectreIcon from "../components/spectre/SpectreIcon";
+import * as queryString from "query-string";
+import { authorization } from "../utils";
+import { showConfirmation } from "../components/spectre/SpectreModalContainer";
+import { showMenu } from "../components/spectre/SpectreMenuContainer";
+import SpectreMenu from "../components/spectre/SpectreMenu";
+import SpectreMenuItem from "../components/spectre/SpectreMenuItem";
+
+export function triviaQuestionsDankTableColumns() {
+  return [
+    (<DankTableColumn key={1} name="">
+      {(_, row) => (
+        <a href={`#/trivia/questions/${row._id}`}>
+          <SpectreIcon icon="share" />
+        </a>
+      )}
+    </DankTableColumn>),
+    (<DankTableColumn key={2} name="category" filter="select">
+    </DankTableColumn>),
+    (<DankTableColumn key={3} name="question" flex="3" filter="input">
+    </DankTableColumn>),
+    (<DankTableColumn key={4} name="hint1">
+    </DankTableColumn>),
+    (<DankTableColumn key={5} name="hint2">
+    </DankTableColumn>),
+    (<DankTableColumn key={6} name="submitter" filter="select">
+    </DankTableColumn>),
+    (<DankTableColumn key={7} name="updatedAt" onSort={tableSortDate}>
+      {tableRenderDate}
+    </DankTableColumn>),
+  ]
+}
 
 interface RouteParams { }
 
@@ -14,7 +44,7 @@ interface State {
   data: QuestionData[]
 }
 
-class TriviaQuestionsView extends React.PureComponent<Props, State> {
+export default class TriviaQuestionsView extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props)
 
@@ -23,10 +53,19 @@ class TriviaQuestionsView extends React.PureComponent<Props, State> {
     }
   }
 
+  componentDidUpdate(prevProps: Props) {
+    if (this.props.location.search !== prevProps.location.search) {
+      this.load()
+    }
+  }
+
   async load() {
     try {
       this.setState({
-        data: await triviaApi.questions.get({ shuffled: false }),
+        data: await triviaApi.questions.get({
+          shuffled: false,
+          ...this.query,
+        }),
       })
     } catch (error) {
       toaster.error(`${error}`)
@@ -37,65 +76,55 @@ class TriviaQuestionsView extends React.PureComponent<Props, State> {
     this.load()
   }
 
-  handleRowClick = (row: QuestionData, event: React.MouseEvent) => {
-    // event.preventDefault()
-    // event.persist()
+  handleRowContextMenu = (row: QuestionData, event: React.MouseEvent) => {
+    if (!authorization.hasPermission("trivia")) {
+      return
+    }
 
-    // const handleVerify = () => {
+    event.preventDefault()
 
-    // }
+    const handleVerify = async () => {
+      if (await showConfirmation("Verify?")) {
+        await triviaApi.questions.id(row._id).put({ verified: true })
+        await this.load()
+      }
 
-    // const handleDelete = () => {
+      menu.hide()
+    }
 
-    // }
+    const handleDelete = async () => {
+      if (await showConfirmation("Delete?")) {
+        await triviaApi.questions.id(row._id).delete()
+        await this.load()
+      }
 
-    // const menu = showMenu((
-    //   <ul className="menu">
-    //     <li className="menu-item">
-    //       <a className="c-hand" onClick={handleVerify}>Verify</a>
-    //     </li>
-    //     <li className="menu-item">
-    //       <a className="c-hand" onClick={handleDelete}>Delete</a>
-    //     </li>
-    //   </ul>
-    // ), { pos: event, removePrevious: true })
+      menu.hide()
+    }
+
+    const menu = showMenu((
+      <SpectreMenu>
+        <SpectreMenuItem>
+          <a className="c-hand text-success" onClick={handleVerify}>Verify</a>
+        </SpectreMenuItem>
+        <SpectreMenuItem>
+          <a className="c-hand text-error" onClick={handleDelete}>Delete</a>
+        </SpectreMenuItem>
+      </SpectreMenu>
+    ), { pos: event, removePrevious: true })
   }
 
   render() {
     return (
       <div style={{ padding: 0 }}>
         <h3 className="s-title">Questions</h3>
-        <DankTable data={this.state.data} style={{ maxHeight: "unset", overflow: "unset" }} keepHeadOnMobile onRowContextMenu={this.handleRowClick}>
-          <DankTableColumn name="">
-            {(_, row) => (
-              <a href={`#/trivia/questions/${row._id}`}>
-                <SpectreIcon icon="share" />
-              </a>
-            )}
-          </DankTableColumn>
-
-          <DankTableColumn name="category" filter="select">
-          </DankTableColumn>
-
-          <DankTableColumn name="question" flex="3" filter="input">
-          </DankTableColumn>
-
-          <DankTableColumn name="hint1">
-          </DankTableColumn>
-
-          <DankTableColumn name="hint2">
-          </DankTableColumn>
-
-          <DankTableColumn name="submitter" filter="select">
-          </DankTableColumn>
-
-          <DankTableColumn name="updatedAt" onSort={tableSortDate}>
-            {tableRenderDate}
-          </DankTableColumn>
+        <DankTable data={this.state.data} style={{ maxHeight: "unset", overflow: "unset" }} keepHeadOnMobile onRowContextMenu={this.handleRowContextMenu}>
+          {triviaQuestionsDankTableColumns()}
         </DankTable>
       </div>
     )
   }
-}
 
-export default hot(module)(TriviaQuestionsView)
+  get query() {
+    return queryString.parse(this.props.location.search)
+  }
+}

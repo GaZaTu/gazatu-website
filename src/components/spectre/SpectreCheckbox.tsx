@@ -1,32 +1,49 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import * as classNames from "classnames";
+import { SpectreRadioGroupContext } from "./SpectreRadioGroup";
 
 interface Props extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
   children?: React.ReactNode
-  inputSize?: ""
   type?: "checkbox" | "radio" | "switch"
   label?: React.ReactNode
   error?: boolean
 }
 
-class SpectreCheckbox extends React.PureComponent<Props> {
+export default class SpectreCheckbox extends React.PureComponent<Props> {
   render() {
-    const { children, inputSize, type, label, error, ...nativeProps } = this.props
-
-    const className = classNames({
-      [`form-${type || "checkbox"}`]: true,
-      [`is-error`]: error,
-    })
+    const { children, type, label, error, ...nativeProps } = this.props
 
     return (
-      <label className={className}>
-        <input {...nativeProps} type={(type === "radio") ? "radio" : "checkbox"} />
-        <i className="form-icon" />
-        {label}
-      </label>
+      <SpectreRadioGroupContext.Consumer>
+        {radioGroup => (
+          <label className={this.getClassName(radioGroup)}>
+            <input {...nativeProps} type={this.getInputType(radioGroup)} checked={this.getChecked(radioGroup)} onChange={this.getOnChange(radioGroup)} className="" />
+            <i className="form-icon" />
+            {label}
+          </label>
+        )}
+      </SpectreRadioGroupContext.Consumer>
     )
   }
-}
 
-export default hot(module)(SpectreCheckbox)
+  getClassName(radioGroup: React.ContextType<typeof SpectreRadioGroupContext>) {
+    const { type, error, ...nativeProps } = this.props
+
+    return classNames({
+      [`form-${type || (radioGroup && "radio") || "checkbox"}`]: true,
+      [`is-error`]: error,
+    }, nativeProps.className)
+  }
+
+  getInputType(radioGroup: React.ContextType<typeof SpectreRadioGroupContext>) {
+    return (radioGroup || this.props.type === "radio") ? "radio" : "checkbox"
+  }
+
+  getChecked(radioGroup: React.ContextType<typeof SpectreRadioGroupContext>) {
+    return this.props.checked || (radioGroup && radioGroup.value === this.props.value)
+  }
+
+  getOnChange(radioGroup: React.ContextType<typeof SpectreRadioGroupContext>) {
+    return this.props.onChange || (radioGroup && radioGroup.onChange)
+  }
+}

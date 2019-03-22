@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import * as classNames from "classnames";
 
 interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -7,7 +6,7 @@ interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElem
   block?: boolean
 }
 
-class SpectreButtonGroup extends React.PureComponent<Props> {
+export default class SpectreButtonGroup extends React.PureComponent<Props> {
   render() {
     const { children, block, ...nativeProps } = this.props
     const className = classNames({
@@ -16,9 +15,9 @@ class SpectreButtonGroup extends React.PureComponent<Props> {
     }, nativeProps.className)
 
     return (
-      <div {...nativeProps} className={className}>{children}</div>
+      <div {...nativeProps} className={className}>
+        {children}
+      </div>
     )
   }
 }
-
-export default hot(module)(SpectreButtonGroup)

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import { FormikProps } from "formik";
 import SpectreCheckbox from "../spectre/SpectreCheckbox";
 
@@ -8,7 +7,7 @@ interface Props extends React.ComponentProps<typeof SpectreCheckbox> {
   name?: string
 }
 
-class SpectreFormikCheckbox extends React.PureComponent<Props> {
+export default class SpectreFormikCheckbox extends React.PureComponent<Props> {
   render() {
     const { formik, name, ...nativeProps } = this.props
     const formikProps = (formik && name) ? {
@@ -30,5 +29,3 @@ class SpectreFormikCheckbox extends React.PureComponent<Props> {
     )
   }
 }
-
-export default hot(module)(SpectreFormikCheckbox)

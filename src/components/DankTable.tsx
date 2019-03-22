@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import SpectrePagination from "./spectre/SpectrePagination";
 import "./DankTable.scss";
 
@@ -34,7 +33,7 @@ interface State {
   page: number
 }
 
-class DankTable extends React.PureComponent<Props, State> {
+export default class DankTable extends React.PureComponent<Props, State> {
   columns = [] as DankTableColumnProps[]
   pageSize = 25
   pageCount = 0
@@ -275,8 +274,6 @@ class DankTable extends React.PureComponent<Props, State> {
     }
   }
 }
-
-export default hot(module)(DankTable)
 
 export function tableRenderDate(val: any) {
   return new Date(val).toLocaleDateString()

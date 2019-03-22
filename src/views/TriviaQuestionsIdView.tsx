@@ -1,14 +1,12 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import { RouteComponentProps } from "react-router";
-import { Formik, Form, Field, FormikActions } from "formik";
+import { Formik, FormikActions } from "formik";
 import { QuestionData, triviaApi, QuestionReportData } from "../api/trivia.api";
 import { loading, authorization } from "../utils";
 import { toaster } from "../components/spectre/SpectreToastContainer";
 import * as idbKeyval from "idb-keyval";
 import DankTable, { DankTableColumn, tableRenderDate, tableSortDate } from "../components/DankTable";
 import { showConfirmation } from "../components/spectre/SpectreModalContainer";
-import SpectreButton from "../components/spectre/SpectreButton";
 import SpectreButtonGroup from "../components/spectre/SpectreButtonGroup";
 import SpectreIcon from "../components/spectre/SpectreIcon";
 import SpectreFormGroup from "../components/spectre/SpectreFormGroup";
@@ -36,7 +34,7 @@ interface State {
   hasTriviaPermission: boolean
 }
 
-class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
+export default class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props)
 
@@ -243,7 +241,7 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
                   </SpectreFormikButton>
                 )}
 
-                <SpectreFormikButton formik={form} type="button" loading={this.state.loading} disabled={this.isNew} onClick={this.handleReport}>
+                <SpectreFormikButton formik={form} type="button" loading={this.state.loading} disabled={this.isNew || this.state.data.verified} onClick={this.handleReport}>
                   <SpectreIcon icon="flag" />
                 </SpectreFormikButton>
 
@@ -301,5 +299,3 @@ class TriviaQuestionsIdView extends React.PureComponent<Props, State> {
     )
   }
 }
-
-export default hot(module)(TriviaQuestionsIdView)

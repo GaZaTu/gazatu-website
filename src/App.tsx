@@ -1,16 +1,46 @@
 import * as React from "react";
-import { HashRouter, Switch, Route } from "react-router-dom";
-import { hot } from "react-hot-loader";
-import "./App.scss";
+import { HashRouter, Switch, Route, Redirect, RouteProps } from "react-router-dom";
+import SpectreSuspense from "./components/spectre/SpectreSuspense";
 import AppNavItemLink from "./components/AppNavItemLink";
 import AppNavItemList from "./components/AppNavItemList";
-import LazyRoute from "./components/LazyRoute";
-import "./register-service-worker";
 import SpectreToastContainer from "./components/spectre/SpectreToastContainer";
 import SpectreModalContainer from "./components/spectre/SpectreModalContainer";
 import SpectreMenuContainer from "./components/spectre/SpectreMenuContainer";
-import { authorization } from "./utils";
+import { authorization, production, fontendDomain } from "./utils";
 import { observer } from "mobx-react";
+import "./register-service-worker";
+import "./App.scss";
+
+const StartView = React.lazy(() => import("./views/StartView"))
+const TriviaQuestionsView = React.lazy(() => import("./views/TriviaQuestionsView"))
+const TriviaQuestionsIdView = React.lazy(() => import("./views/TriviaQuestionsIdView"))
+const TriviaReportsView = React.lazy(() => import("./views/TriviaReportsView"))
+const TriviaReportedQuestionsView = React.lazy(() => import("./views/TriviaReportedQuestionsView"))
+const TriviaStatisticsView = React.lazy(() => import("./views/TriviaStatisticsView"))
+const UsersView = React.lazy(() => import("./views/UsersView"))
+const UsersIdView = React.lazy(() => import("./views/UsersIdView"))
+const ApiRefView = React.lazy(() => import("./views/ApiRefView"))
+const AuthorizationView = React.lazy(() => import("./views/AuthorizationView"))
+
+// function routeOrRedirect(condition: boolean, node: React.ReactNode) {
+//   if (condition) {
+//     return node
+//   } else {
+//     return <Redirect to="/" />
+//   }
+// }
+
+// class ProtectedRoute extends React.Component<{ component: any, perms: string[] } & RouteProps> {
+//   render() {
+//     const { component, perms, ...props } = this.props
+
+//     console.log(perms, authorization.hasPermission(...perms))
+
+//     return (
+//       <Route {...props} component={authorization.hasPermission(...perms) ? component : () => (<Redirect to="/" />)} />
+//     )
+//   }
+// }
 
 interface Props { }
 
@@ -19,12 +49,16 @@ interface State {
 }
 
 @observer
-class App extends React.Component<Props, State> {
+export default class App extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
 
     this.state = {
       sidebarActive: false,
+    }
+
+    if (production && location.hostname !== fontendDomain) {
+      location.hostname = fontendDomain
     }
   }
 
@@ -68,10 +102,13 @@ class App extends React.Component<Props, State> {
                   <AppNavItemLink to="/trivia/statistics">Statistics</AppNavItemLink>
                   <AppNavItemLink to="/trivia/questions/new">Submit</AppNavItemLink>
                   <AppNavItemLink to="/trivia/questions">Questions</AppNavItemLink>
-                  {authorization.hasPermission("trivia") && [
-                    (<AppNavItemLink key={1} to="/trivia/reports">Reports</AppNavItemLink>),
-                    (<AppNavItemLink key={2} to="/trivia/reported-questions">Reported Questions</AppNavItemLink>),
-                  ]}
+                  {authorization.hasPermission("trivia") && (
+                    <React.Fragment>
+                      <AppNavItemLink to="/trivia/reports">Reports</AppNavItemLink>
+                      <AppNavItemLink to="/trivia/reported-questions">Reported Questions</AppNavItemLink>
+                      <AppNavItemLink to="/trivia/questions?verified=false">Unverified Questions</AppNavItemLink>
+                    </React.Fragment>
+                  )}
                 </AppNavItemList>
                 {authorization.hasPermission("users") && (
                   <AppNavItemLink to="/users">Users</AppNavItemLink>
@@ -80,36 +117,45 @@ class App extends React.Component<Props, State> {
                   <AppNavItemLink to={`/users/${authorization.id}`}>Profile</AppNavItemLink>
                 )}
                 <AppNavItemLink to="/api-ref">Api-Ref</AppNavItemLink>
-                <AppNavItemLink to={authorization.isLoggedIn ? "/logout" : "/login"}>{authorization.isLoggedIn ? "Logout" : "Login"}</AppNavItemLink>
+                {authorization.isLoggedIn ?
+                  (<AppNavItemLink to="/logout">Logout</AppNavItemLink>) :
+                  (<AppNavItemLink to="/login">Login</AppNavItemLink>)
+                }
               </ul>
             </div>
           </div>
           <a className="off-canvas-overlay" onClick={this.toggleSidebar} />
           <div className="app-content off-canvas-content">
-            <Switch>
-              <LazyRoute exact path="/" provider={() => import("./views/StartView")} />
-              <LazyRoute exact path="/trivia/questions" provider={() => import("./views/TriviaQuestionsView")} />
-              <LazyRoute exact path="/trivia/questions/:id" provider={() => import("./views/TriviaQuestionsIdView")} />
-              {authorization.hasPermission("trivia") && [
-                (<LazyRoute key={1} exact path="/trivia/reports" provider={() => import("./views/TriviaReportsView")} />),
-                (<LazyRoute key={2} exact path="/trivia/reported-questions" provider={() => import("./views/TriviaReportedQuestionsView")} />),
-              ]}
-              <LazyRoute exact path="/trivia/statistics" provider={() => import("./views/TriviaStatisticsView")} />
-              {authorization.hasPermission("users") && (
-                <LazyRoute exact path="/users" provider={() => import("./views/UsersView")} />
-              )}
-              <LazyRoute exact path="/users/:id" provider={() => import("./views/UsersIdView")} />
-              <LazyRoute exact path="/api-ref" provider={() => import("./views/ApiRefView")} />
-              <LazyRoute exact path={authorization.isLoggedIn ? "/logout" : "/login"} provider={() => import("./views/AuthorizationView")} />
-              <Route component={() => (
-                <div className="empty" style={{ background: "unset" }}>
-                  <p className="empty-title h5">404 - eShrug</p>
-                  <p className="empty-subtitle">Page not found</p>
-                </div>
-              )} />
-            </Switch>
-            {/* <footer style={{ bottom: 0, position: "fixed" }}>
-              <p>Test Footer</p>
+            <div style={{ paddingBottom: "2rem" }}>
+              <SpectreSuspense>
+                <Switch>
+                  <Route exact path="/" component={StartView} />
+                  <Route exact path="/trivia/questions" component={TriviaQuestionsView} />
+                  <Route exact path="/trivia/questions/:id" component={TriviaQuestionsIdView} />
+                  {/* {authorization.hasPermission("trivia") && ( */}
+                    {/* <React.Fragment> */}
+                      <Route exact path="/trivia/reports" component={TriviaReportsView} />
+                      <Route exact path="/trivia/reported-questions" component={TriviaReportedQuestionsView} />
+                    {/* </React.Fragment> */}
+                  {/* )} */}
+                  <Route exact path="/trivia/statistics" component={TriviaStatisticsView} />
+                  {/* {authorization.hasPermission("users") && ( */}
+                    <Route exact path="/users" component={UsersView} />
+                  {/* )} */}
+                  <Route exact path="/users/:id" component={UsersIdView} />
+                  <Route exact path="/api-ref" component={ApiRefView} />
+                  <Route exact path={authorization.isLoggedIn ? "/logout" : "/login"} component={AuthorizationView} />
+                  <Route component={() => (
+                    <div className="empty" style={{ background: "unset" }}>
+                      <p className="empty-title h5">404 - eShrug</p>
+                      <p className="empty-subtitle">Page not found</p>
+                    </div>
+                  )} />
+                </Switch>
+              </SpectreSuspense>
+            </div>
+            {/* <footer style={{ position: "absolute", bottom: "1rem" }}>
+              Test Footer
             </footer> */}
             <SpectreModalContainer />
             <SpectreToastContainer />
@@ -120,5 +166,3 @@ class App extends React.Component<Props, State> {
     )
   }
 }
-
-export default hot(module)(App)

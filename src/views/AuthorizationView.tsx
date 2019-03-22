@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import { Formik, FormikActions, FormikErrors } from "formik";
 import { AuthData, authApi } from "../api/auth.api";
 import { authorization } from "../utils";
@@ -18,7 +17,7 @@ interface Props extends RouteComponentProps<RouteParams> { }
 
 interface State { }
 
-class AuthorizationView extends React.PureComponent<Props, State> {
+export default class AuthorizationView extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props)
 
@@ -92,8 +91,8 @@ class AuthorizationView extends React.PureComponent<Props, State> {
             )}
           </Formik>
 
-          <SpectreDivider className="hide-md" content="OR" vertical />
-          <SpectreDivider className="show-md col-md-12" content="OR" textCenter />
+          <SpectreDivider className="hide-md" text="OR" vertical />
+          <SpectreDivider className="show-md col-md-12" text="OR" textAlign="center" />
 
           <Formik<AuthData>
             enableReinitialize
@@ -134,5 +133,3 @@ class AuthorizationView extends React.PureComponent<Props, State> {
     )
   }
 }
-
-export default hot(module)(AuthorizationView)

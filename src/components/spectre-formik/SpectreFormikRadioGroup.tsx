@@ -1,16 +1,30 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import { FormikProps } from "formik";
 import SpectreRadioGroup from "../spectre/SpectreRadioGroup";
+import { SpectreFormikFormContext } from "./SpectreFormikForm";
+import { SpectreFormikFormGroupContext } from "./SpectreFormikFormGroup";
 
 interface Props extends React.ComponentProps<typeof SpectreRadioGroup> {
-  formik?: FormikProps<any>
-  name?: string
+  required?: boolean
 }
 
-class SpectreFormikRadioGroup extends React.PureComponent<Props> {
+export default class SpectreFormikRadioGroup extends React.PureComponent<Props> {
   render() {
-    const { formik, name, ...nativeProps } = this.props
+    return (
+      <SpectreFormikFormContext.Consumer>
+        {form => (
+          <SpectreFormikFormGroupContext.Consumer>
+            {formGroup => (
+              this.renderRadioGroup(form && form.formik, formGroup && formGroup.name)
+            )}
+          </SpectreFormikFormGroupContext.Consumer>
+        )}
+      </SpectreFormikFormContext.Consumer>
+    )
+  }
+
+  renderRadioGroup(formik?: FormikProps<any>, name?: string) {
+    const { required, ...nativeProps } = this.props
     const formikProps = (formik && name) ? {
       name: name,
       value: formik.values[name],
@@ -20,7 +34,7 @@ class SpectreFormikRadioGroup extends React.PureComponent<Props> {
     } : {}
 
     if (formik && name) {
-      if (nativeProps.required && formik.touched[name] && !formik.errors[name] && !formik.values[name]) {
+      if (required && formik.touched[name] && !formik.errors[name] && !formik.values[name]) {
         formik.setFieldError(name, "required")
       }
     }
@@ -30,5 +44,3 @@ class SpectreFormikRadioGroup extends React.PureComponent<Props> {
     )
   }
 }
-
-export default hot(module)(SpectreFormikRadioGroup)

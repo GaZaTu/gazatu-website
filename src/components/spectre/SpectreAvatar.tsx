@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import * as classNames from "classnames";
 
 interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -10,7 +9,7 @@ interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElem
   presence?: "offline" | "online" | "busy" | "away"
 }
 
-class SpectreAvatar extends React.PureComponent<Props> {
+export default class SpectreAvatar extends React.PureComponent<Props> {
   render() {
     const { size, initials, image, icon, presence, ...nativeProps } = this.props
     const className = classNames({
@@ -27,5 +26,3 @@ class SpectreAvatar extends React.PureComponent<Props> {
     )
   }
 }
-
-export default hot(module)(SpectreAvatar)

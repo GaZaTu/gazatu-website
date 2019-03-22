@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import "./ActivityCalendar.scss";
 
 interface Props {
@@ -10,7 +9,7 @@ interface Props {
 
 interface State { }
 
-class AcitivityCalendar extends React.PureComponent<Props, State> {
+export default class AcitivityCalendar extends React.PureComponent<Props, State> {
   render() {
     const months = this.props.months || 6
     const today = new Date()
@@ -32,8 +31,6 @@ class AcitivityCalendar extends React.PureComponent<Props, State> {
     )
   }
 }
-
-export default hot(module)(AcitivityCalendar)
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, (month === 11) ? 1 : month + 1, 0).getDate()

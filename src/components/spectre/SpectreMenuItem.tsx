@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import * as classNames from "classnames";
 
 interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLLIElement>, HTMLLIElement> {
@@ -10,14 +9,14 @@ interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLLIEleme
   badgeCheckboxOnChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-class SpectreMenuItem extends React.PureComponent<Props> {
+export default class SpectreMenuItem extends React.PureComponent<Props> {
   render() {
     const { children, badge, badgeKind, badgeCheckboxChecked, badgeCheckboxOnChange, ...nativeProps } = this.props
     const className = classNames("menu-item", nativeProps.className)
 
     return (
       <li {...nativeProps} className={className}>
-        {badge && (
+        {(badge || badgeKind) && (
           <div className="menu-badge">
             {(badgeKind === "checkbox") ? (
               <label className="form-checkbox">
@@ -35,5 +34,3 @@ class SpectreMenuItem extends React.PureComponent<Props> {
     )
   }
 }
-
-export default hot(module)(SpectreMenuItem)

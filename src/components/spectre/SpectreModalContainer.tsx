@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 
 export interface Modal {
   size?: "sm" | "lg"
@@ -16,7 +15,7 @@ interface State {
   resolve: () => any
 }
 
-class SpectreModalContainer extends React.PureComponent<Props, State> {
+export default class SpectreModalContainer extends React.PureComponent<Props, State> {
   static instance?: SpectreModalContainer
 
   constructor(props: any) {
@@ -79,8 +78,6 @@ class SpectreModalContainer extends React.PureComponent<Props, State> {
     )
   }
 }
-
-export default hot(module)(SpectreModalContainer)
 
 export function showModal(options: Modal) {
   if (!SpectreModalContainer.instance) {

@@ -1,13 +1,16 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 
 export interface Menu {
   id?: string
   children: React.ReactNode
-  pos: { x: number, y: number } | { clientX: number, clientY: number }
+  pos: { pageX: number, pageY: number }
   documentClickListener?: () => any
   menuClickListener?: (event: React.MouseEvent) => any
   removePrevious?: boolean
+  style?: React.CSSProperties
+  adjustedPos?: boolean
+  adjustLeft?: (el: HTMLElement, rect: ClientRect | DOMRect) => number
+  adjustTop?: (el: HTMLElement, rect: ClientRect | DOMRect) => number
 }
 
 interface Props { }
@@ -16,7 +19,7 @@ interface State {
   menus: Menu[]
 }
 
-class SpectreMenuContainer extends React.PureComponent<Props, State> {
+export default class SpectreMenuContainer extends React.PureComponent<Props, State> {
   static instance?: SpectreMenuContainer
 
   constructor(props: any) {
@@ -34,15 +37,16 @@ class SpectreMenuContainer extends React.PureComponent<Props, State> {
 
     menuToAdd.id = Math.random().toString(36).substr(2, 10)
     menuToAdd.pos = Object.assign({}, menuToAdd.pos)
-    menuToAdd.documentClickListener = () => hide()
-    menuToAdd.menuClickListener = event => {
+    menuToAdd.documentClickListener = menuToAdd.documentClickListener || (() => hide())
+    menuToAdd.menuClickListener = menuToAdd.menuClickListener || (event => {
       event.preventDefault()
       event.stopPropagation()
 
       return false
-    }
+    })
 
     document.addEventListener("click", menuToAdd.documentClickListener)
+    document.addEventListener("contextmenu", menuToAdd.documentClickListener)
 
     if (menuToAdd.removePrevious) {
       for (const menu of this.state.menus) {
@@ -65,6 +69,7 @@ class SpectreMenuContainer extends React.PureComponent<Props, State> {
   removeMenu(menuToRemove: Menu) {
     if (menuToRemove.documentClickListener) {
       document.removeEventListener("click", menuToRemove.documentClickListener)
+      document.removeEventListener("contextmenu", menuToRemove.documentClickListener)
     }
 
     this.setState({
@@ -73,21 +78,52 @@ class SpectreMenuContainer extends React.PureComponent<Props, State> {
   }
 
   makeMenuStyle(menu: Menu, index: number) {
-    const pos = menu.pos as any
+    const pos = menu.pos
 
     return {
       position: "absolute" as any,
-      left: pos.x || pos.clientX,
-      top: pos.y || pos.clientY,
+      left: pos.pageX,
+      top: pos.pageY,
       zIndex: 300 + index,
     }
+  }
+
+  getMenuRef(menu: Menu, el: HTMLElement | null) {
+    if (el && !menu.adjustedPos) {
+      const menuRect = el.getBoundingClientRect()
+      const menuStyle = (menu.style = menu.style || {})
+
+      if (menuRect.right > window.innerWidth) {
+        if (menu.adjustLeft) {
+          menuStyle.left = menu.adjustLeft(el, menuRect)
+        } else {
+          menuStyle.left = el.offsetLeft - (menuRect.right - window.innerWidth) - 26
+        }
+      }
+
+      if (menuRect.bottom > window.innerHeight) {
+        if (menu.adjustTop) {
+          menuStyle.top = menu.adjustTop(el, menuRect)
+        } else {
+          menuStyle.top = el.offsetTop - (menuRect.bottom - window.innerHeight) - 26
+        }
+      }
+
+      menu.adjustedPos = true
+
+      this.setState({
+        menus: this.state.menus.slice(),
+      })
+    }
+
+    return menu.id
   }
 
   render() {
     return (
       <div className="spectre-menu-container">
         {this.state.menus.map((menu, index) => (
-          <div key={index} style={this.makeMenuStyle(menu, index)} onClick={menu.menuClickListener}>
+          <div key={menu.id} ref={el => this.getMenuRef(menu, el)} className="float-menu" style={Object.assign(this.makeMenuStyle(menu, index), menu.style)} onClick={menu.menuClickListener}>
             {menu.children}
           </div>
         ))}
@@ -95,8 +131,6 @@ class SpectreMenuContainer extends React.PureComponent<Props, State> {
     )
   }
 }
-
-export default hot(module)(SpectreMenuContainer)
 
 export function showMenu(children: React.ReactNode, options = {} as Partial<Menu>) {
   if (!SpectreMenuContainer.instance) {

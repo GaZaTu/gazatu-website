@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import * as classNames from "classnames";
 
 interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -7,11 +6,10 @@ interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElem
   avatarImage?: string
   avatarInitials?: string
   avatarStyle?: React.CSSProperties
-
   onClose?: (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => any
 }
 
-class SpectreChip extends React.PureComponent<Props> {
+export default class SpectreChip extends React.PureComponent<Props> {
   render() {
     const { children, avatarImage, avatarInitials, avatarStyle, onClose, ...nativeProps } = this.props
     const className = classNames("chip", nativeProps.className)
@@ -26,5 +24,3 @@ class SpectreChip extends React.PureComponent<Props> {
     )
   }
 }
-
-export default hot(module)(SpectreChip)

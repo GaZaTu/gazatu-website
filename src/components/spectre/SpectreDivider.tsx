@@ -1,26 +1,23 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import * as classNames from "classnames";
 
 interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  content?: string
+  text?: string
   vertical?: boolean
-  textCenter?: boolean
+  textAlign?: "left" | "center" | "right"
 }
 
-class SpectreDivider extends React.PureComponent<Props> {
+export default class SpectreDivider extends React.PureComponent<Props> {
   render() {
-    const { content, vertical, textCenter, ...nativeProps } = this.props
+    const { text, vertical, textAlign, ...nativeProps } = this.props
     const className = classNames({
       "divider": !vertical,
       "divider-vert": vertical,
-      "text-center": textCenter,
+      [`text-${textAlign}`]: textAlign,
     }, nativeProps.className)
 
     return (
-      <div {...nativeProps} className={className} data-content={content} />
+      <div {...nativeProps} className={className} data-content={text} />
     )
   }
 }
-
-export default hot(module)(SpectreDivider)

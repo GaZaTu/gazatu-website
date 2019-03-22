@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import DankTable, { DankTableColumn, tableRenderDate, tableSortDate } from "../components/DankTable";
 import { RouteComponentProps } from "react-router";
 import { toaster } from "../components/spectre/SpectreToastContainer";
@@ -14,7 +13,7 @@ interface State {
   data: UserData[]
 }
 
-class TriviaQuestionsView extends React.PureComponent<Props, State> {
+export default class TriviaQuestionsView extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props)
 
@@ -40,7 +39,8 @@ class TriviaQuestionsView extends React.PureComponent<Props, State> {
   render() {
     return (
       <div style={{ padding: 0 }}>
-        <DankTable data={this.state.data} style={{ maxHeight: "unset", overflow: "unset" }} caption="Users" keepHeadOnMobile>
+        <h3 className="s-title">Users</h3>
+        <DankTable data={this.state.data} style={{ maxHeight: "unset", overflow: "unset" }} keepHeadOnMobile>
           <DankTableColumn name="">
             {(_, row) => (
               <a href={`#/users/${row._id}`}>
@@ -64,5 +64,3 @@ class TriviaQuestionsView extends React.PureComponent<Props, State> {
     )
   }
 }
-
-export default hot(module)(TriviaQuestionsView)

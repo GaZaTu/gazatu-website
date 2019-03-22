@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import DankTable, { DankTableColumn, tableRenderDate, tableSortDate } from "../components/DankTable";
 import { RouteComponentProps } from "react-router";
 import { toaster } from "../components/spectre/SpectreToastContainer";
@@ -14,7 +13,7 @@ interface State {
   data: ReportData[]
 }
 
-class TriviaReportsView extends React.PureComponent<Props, State> {
+export default class TriviaReportsView extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props)
 
@@ -64,5 +63,3 @@ class TriviaReportsView extends React.PureComponent<Props, State> {
     )
   }
 }
-
-export default hot(module)(TriviaReportsView)

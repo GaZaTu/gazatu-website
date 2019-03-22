@@ -1,20 +1,21 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
+import * as classNames from "classnames";
 
-interface DankTabProps {
+interface SpectreTabProps {
   name: string
   canClose?: boolean
   badge?: string
 }
 
-export class SpectreTab extends React.PureComponent<DankTabProps> { }
+export class SpectreTab extends React.PureComponent<SpectreTabProps> { }
 
-interface Props {
+interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+  children?: React.ReactNode
   canCloseTabs?: boolean
   onCloseTab?: (tab: string) => any
   defaultTab?: string
   renderHiddenTabs?: boolean
-  renderTabAction?: () => React.ReactNode
+  tabAction?: React.ReactNode
   stretchTabs?: boolean
 }
 
@@ -22,7 +23,7 @@ interface State {
   activeTab: string
 }
 
-class SpectreTabs extends React.PureComponent<Props, State> {
+export default class SpectreTabs extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props)
 
@@ -60,10 +61,12 @@ class SpectreTabs extends React.PureComponent<Props, State> {
   }
 
   render() {
+    const { children, canCloseTabs, onCloseTab, defaultTab, renderHiddenTabs, tabAction, stretchTabs, ...nativeProps } = this.props
+    const className = classNames("spectre-tabs", nativeProps.className)
     const tabs = this.getTabs()
 
     return (
-      <div className="dank-tabs">
+      <div {...nativeProps} className={className}>
         <ul className={`tab ${this.props.stretchTabs ? "tab-block" : ""}`}>
           {tabs.map(tab => (
             <li key={tab.name} className={`tab-item ${tab.name === this.state.activeTab ? "active" : ""}`}>
@@ -76,7 +79,9 @@ class SpectreTabs extends React.PureComponent<Props, State> {
             </li>
           ))}
 
-          {this.props.renderTabAction && this.props.renderTabAction()}
+          {tabAction && (
+            <li className="tab-item tab-action">{tabAction}</li>
+          )}
         </ul>
 
         <div className="tab-pages">
@@ -94,5 +99,3 @@ class SpectreTabs extends React.PureComponent<Props, State> {
     )
   }
 }
-
-export default hot(module)(SpectreTabs)

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import * as classNames from "classnames";
 
 interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLLabelElement>, HTMLLabelElement> {
@@ -8,7 +7,7 @@ interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLLabelEl
   round?: boolean
 }
 
-class SpectreLabel extends React.PureComponent<Props> {
+export default class SpectreLabel extends React.PureComponent<Props> {
   render() {
     const { children, kind, round, ...nativeProps } = this.props
     const className = classNames({
@@ -22,5 +21,3 @@ class SpectreLabel extends React.PureComponent<Props> {
     )
   }
 }
-
-export default hot(module)(SpectreLabel)

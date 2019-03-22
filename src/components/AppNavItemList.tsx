@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import { Link } from "react-router-dom";
 import AppNavItemLink from "./AppNavItemLink";
 import { reactNodeIsComponent } from "../utils";
@@ -10,7 +9,7 @@ interface Props {
   matchStartsWith?: string,
 }
 
-class AppNavItemList extends React.Component<Props> {
+export default class AppNavItemList extends React.Component<Props> {
   render() {
     const active = (location.hash.substr(1) === this.props.titleTo) || this.isActive()
 
@@ -48,5 +47,3 @@ class AppNavItemList extends React.Component<Props> {
     return false
   }
 }
-
-export default hot(module)(AppNavItemList)

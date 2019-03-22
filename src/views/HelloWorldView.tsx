@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import { RouteComponentProps } from "react-router";
 import SpectreInputGroup from "../components/spectre/SpectreInputGroup";
 import SpectreInput from "../components/spectre/SpectreInput";
@@ -20,7 +19,7 @@ interface State {
   bool: boolean
 }
 
-class HelloWorldView extends React.Component<Props, State> {
+export default class HelloWorldView extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
 
@@ -64,7 +63,7 @@ class HelloWorldView extends React.Component<Props, State> {
               <SpectreInput />
             </SpectreFormGroup>
           </fieldset>
-          <SpectreDivider className="text-center" content="test" />
+          <SpectreDivider className="text-center" text="test" />
           <fieldset>
             <SpectreFormGroup label="test" error={true} hint="invalid input" horizontal={true}>
               <SpectreRadioGroup value={this.state.value} onChange={ev => this.setState({ value: ev.target.value })}>
@@ -99,5 +98,3 @@ class HelloWorldView extends React.Component<Props, State> {
     )
   }
 }
-
-export default hot(module)(HelloWorldView)

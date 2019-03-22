@@ -1,6 +1,6 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import * as classNames from "classnames";
+import { SpectreAccordionGroupContext } from "./SpectreAccordionGroup";
 
 interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   children?: React.ReactNode
@@ -9,21 +9,27 @@ interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElem
   exclusive?: boolean
 }
 
-class SpectreAccordion extends React.PureComponent<Props> {
+export default class SpectreAccordion extends React.PureComponent<Props> {
+  id = Math.random().toString(36).substr(2, 10)
+
   render() {
     const { children, name, label, exclusive, ...nativeProps } = this.props
     const className = classNames("accordion", nativeProps.className)
-    const inputType = exclusive ? "radio" : "checkbox"
-    const id = Math.random().toString(36).substr(2, 10)
 
     return (
-      <div {...nativeProps} className={className}>
-        <input type={inputType} id={id} name={name} hidden />
-        <label className="accordion-header c-hand" htmlFor={id}>{label}</label>
-        <div className="accordion-body">{children}</div>
-      </div>
+      <SpectreAccordionGroupContext.Consumer>
+        {accordionGroup => (
+          <div {...nativeProps} className={className}>
+            <input type={this.getInputType(exclusive || accordionGroup.exclusive)} id={this.id} name={name || accordionGroup.name} hidden />
+            <label className="accordion-header c-hand" htmlFor={this.id}>{label}</label>
+            <div className="accordion-body">{children}</div>
+          </div>
+        )}
+      </SpectreAccordionGroupContext.Consumer>
     )
   }
-}
 
-export default hot(module)(SpectreAccordion)
+  getInputType(exclusive = this.props.exclusive) {
+    return exclusive ? "radio" : "checkbox"
+  }
+}

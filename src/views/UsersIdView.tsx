@@ -1,15 +1,17 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import { RouteComponentProps } from "react-router";
-import { Formik, Form, Field, FormikActions } from "formik";
+import { Formik, FormikActions } from "formik";
 import { loading, authorization } from "../utils";
 import { toaster } from "../components/spectre/SpectreToastContainer";
 import { showConfirmation } from "../components/spectre/SpectreModalContainer";
 import { UserData, authApi } from "../api/auth.api";
 import SpectreAutoComplete from "../components/spectre/SpectreAutoComplete";
 import SpectreButton from "../components/spectre/SpectreButton";
-import SpectreFormGroup from "../components/spectre/SpectreFormGroup";
 import SpectreFormikInput from "../components/spectre-formik/SpectreFormikInput";
+import SpectreIcon from "../components/spectre/SpectreIcon";
+import SpectreFormikForm from "../components/spectre-formik/SpectreFormikForm";
+import SpectreFormikFormGroup from "../components/spectre-formik/SpectreFormikFormGroup";
+import SpectreButtonGroup from "../components/spectre/SpectreButtonGroup";
 
 interface RouteParams {
   id: string
@@ -27,7 +29,7 @@ interface State {
   userGrantedNotificationPermission: boolean
 }
 
-class UsersIdView extends React.PureComponent<Props, State> {
+export default class UsersIdView extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props)
 
@@ -105,10 +107,6 @@ class UsersIdView extends React.PureComponent<Props, State> {
     }
   }
 
-  isLoading(form?: { isSubmitting: boolean }) {
-    return (this.state.loading || (form && form.isSubmitting))
-  }
-
   handleSubmit = async (data: Partial<UserData>, actions: FormikActions<Partial<UserData>>) => { }
 
   handleDelete = async () => {
@@ -149,38 +147,36 @@ class UsersIdView extends React.PureComponent<Props, State> {
   render() {
     return (
       <div>
-        <h2>User</h2>
+        <h3 className="s-title">User</h3>
         <Formik
           enableReinitialize
           initialValues={this.state.data}
           onSubmit={this.handleSubmit}
         >
           {form => (
-            <Form className="form-horizontal">
-              <div className="btn-group btn-group-block col-2 col-sm-4 col-ml-auto">
+            <SpectreFormikForm formik={form} horizontal>
+              <SpectreButtonGroup className="col-2 col-sm-4 col-ml-auto" block>
                 {/* {this.state.isProfile && (
-                  <SpectreButton type="button" color="error" loading={this.isLoading(form)} disabled={this.state.userGrantedNotificationPermission} onClick={this.handleSetupPushNotifications}>
-                    <i className="icon icon-message" />
+                  <SpectreButton type="button" color="error" loading={this.state.loading} disabled={this.state.userGrantedNotificationPermission} onClick={this.handleSetupPushNotifications}>
+                    <SpectreIcon icon="message" />
                   </SpectreButton>
                 )} */}
 
-                <SpectreButton type="button" color="error" loading={this.isLoading(form)} disabled={this.isLoading(form)} onClick={this.handleDelete}>
-                  <i className="icon icon-delete" />
+                <SpectreButton type="button" kind="error" loading={this.state.loading} onClick={this.handleDelete}>
+                  <SpectreIcon icon="delete" />
                 </SpectreButton>
-              </div>
+              </SpectreButtonGroup>
 
-              <SpectreFormGroup label="Username">
-                <SpectreFormikInput formik={form} name="username" placeholder="Username" readOnly />
-              </SpectreFormGroup>
-            </Form>
+              <SpectreFormikFormGroup name="username" label="Username">
+                <SpectreFormikInput placeholder="Username" readOnly />
+              </SpectreFormikFormGroup>
+            </SpectreFormikForm>
           )}
         </Formik>
 
         <label className="form-label">Permissions</label>
-        <SpectreAutoComplete options={this.state.permissions} tags={this.state.userPermissions} onChange={this.handlePermissionsChange} readOnly={!this.state.hasUsersPermission} />
+        <SpectreAutoComplete options={this.state.permissions} tags={this.state.userPermissions} onTagsChange={this.handlePermissionsChange} readOnly={!this.state.hasUsersPermission} />
       </div>
     )
   }
 }
-
-export default hot(module)(UsersIdView)

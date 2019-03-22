@@ -1,5 +1,4 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import "./SpectreToastContainer.scss"
 
 export interface Toast {
@@ -16,7 +15,7 @@ interface State {
   toasts: Toast[]
 }
 
-class SpectreToastContainer extends React.PureComponent<Props, State> {
+export default class SpectreToastContainer extends React.PureComponent<Props, State> {
   static instance?: SpectreToastContainer
 
   constructor(props: any) {
@@ -62,8 +61,6 @@ class SpectreToastContainer extends React.PureComponent<Props, State> {
     )
   }
 }
-
-export default hot(module)(SpectreToastContainer)
 
 export function showToast(children: React.ReactNode, options = {} as Partial<Toast>) {
   if (!SpectreToastContainer.instance) {

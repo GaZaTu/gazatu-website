@@ -1,8 +1,7 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import { Link } from "react-router-dom";
 
-class AppNavItemLink extends React.Component<{ to: string }> {
+export default class AppNavItemLink extends React.Component<{ to: string }> {
   render() {
     const active = (location.hash.substr(1) === this.props.to)
 
@@ -13,5 +12,3 @@ class AppNavItemLink extends React.Component<{ to: string }> {
     )
   }
 }
-
-export default hot(module)(AppNavItemLink)

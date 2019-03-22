@@ -1,6 +1,6 @@
 import * as React from "react";
-import { hot } from "react-hot-loader";
 import * as classNames from "classnames";
+import { SpectreFormContext } from "./SpectreForm";
 
 interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   children?: React.ReactNode
@@ -12,7 +12,10 @@ interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElem
   horizontal?: boolean
 }
 
-class SpectreFormGroup extends React.PureComponent<Props> {
+export default class SpectreFormGroup extends React.PureComponent<Props> {
+  id = Math.random().toString(36).substr(2, 10)
+  consumedId = false
+
   render() {
     const { children, size, label, hint, success, error, horizontal, ...nativeProps } = this.props
     const className = classNames({
@@ -20,38 +23,73 @@ class SpectreFormGroup extends React.PureComponent<Props> {
       "has-success": success,
       "has-error": error,
     }, nativeProps.className)
-    const id = Math.random().toString(36).substr(2, 10)
 
-    const labelNode = () => (label && (<label className={`form-label label-${size}`} htmlFor={id}>{label}</label>))
-    const childrenNode = () => ((React.Children.count(children) === 1) ? React.Children.map(children, child =>
-      React.cloneElement(child as React.ReactElement<any>, { id, inputSize: size })
-    ) : children)
-    const hintNode = (cls: string) => (hint && (<span className={`form-input-hint input-${size} ${cls}`}>{hint}</span>))
+    return (
+      <SpectreFormContext.Consumer>
+        {form => (
+          <SpectreFormGroupContext.Provider value={this.provideContext(form)}>
+            <div {...nativeProps} className={className}>
+              {this.getInnerNodes(form)}
+            </div>
+          </SpectreFormGroupContext.Provider>
+        )}
+      </SpectreFormContext.Consumer>
+    )
+  }
+
+  provideContext(form: React.ContextType<typeof SpectreFormContext>) {
+    return {
+      id: this.id,
+      size: this.props.size || (form && form.size),
+    }
+  }
+
+  getInnerNodes(form: React.ContextType<typeof SpectreFormContext>) {
+    let { children, size, label, hint, horizontal } = this.props
+
+    size = size || (form && form.size)
+    horizontal = horizontal || (form && form.horizontal)
+
+    const labelNode = label && (
+      <label className={`form-label label-${size}`} htmlFor={this.id}>{label}</label>
+    )
+
+    const hintNode = (cls: string) => (
+      hint && (
+        <span className={`form-input-hint input-${size} ${cls}`}>{hint}</span>
+      )
+    )
 
     if (horizontal) {
       return (
-        <div {...nativeProps} className={className}>
+        <React.Fragment>
           <div className="col-3 col-sm-12">
-            {labelNode()}
+            {labelNode}
           </div>
-          <div className="col-6 col-sm-12">
-            {childrenNode()}
+          <div className="col-9 col-sm-12">
+            {children}
+            {hintNode("")}
           </div>
-          <div className="col-3 col-sm-12">
+          {/* <div className="col-3 col-sm-12">
             {hintNode("form-checkbox")}
-          </div>
-        </div>
+          </div> */}
+        </React.Fragment>
       )
     } else {
       return (
-        <div {...nativeProps} className={className}>
-          {labelNode()}
-          {childrenNode()}
+        <React.Fragment>
+          {labelNode}
+          {children}
           {hintNode("")}
-        </div>
+        </React.Fragment>
       )
     }
   }
 }
 
-export default hot(module)(SpectreFormGroup)
+interface Context {
+  id?: string
+  size?: Props["size"]
+}
+
+export const SpectreFormGroupContext = React.createContext<Context | undefined>(undefined)
