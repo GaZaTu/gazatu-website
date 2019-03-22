@@ -20,6 +20,7 @@ export interface DankTableColumnProps {
 export class DankTableColumn extends React.PureComponent<DankTableColumnProps> { }
 
 interface Props {
+  children: React.ReactNode
   data: any[]
   style?: React.CSSProperties
   caption?: string
@@ -31,10 +32,10 @@ interface Props {
 
 interface State {
   page: number
+  columns: DankTableColumnProps[]
 }
 
 export default class DankTable extends React.PureComponent<Props, State> {
-  columns = [] as DankTableColumnProps[]
   pageSize = 25
   pageCount = 0
 
@@ -43,17 +44,36 @@ export default class DankTable extends React.PureComponent<Props, State> {
 
     this.state = {
       page: 0,
+      columns: DankTable.getColumnsFromChildren(props),
     }
   }
 
-  componentDidMount() {
-    this.updateColumns()
+  static getColumnsFromChildren(props: Props) {
+    const columns = [] as DankTableColumnProps[]
+
+    React.Children.forEach(props.children, child => {
+      if (typeof child === "object") {
+        const childAsElem = child as React.ReactElement<any>
+
+        if (typeof childAsElem.type === "function") {
+          columns.push(Object.assign({}, childAsElem.props))
+        }
+      }
+    })
+
+    return columns
+  }
+
+  static getDerivedStateFromProps(props: Props, prevState: State): Partial<State> | null {
+    return {
+      columns: DankTable.getColumnsFromChildren(props),
+    }
   }
 
   onColTitleClick = (col: DankTableColumnProps) => {
     const sortDir = col.sortDir
 
-    for (const col of this.columns) {
+    for (const col of this.state.columns) {
       col.sortDir = undefined
     }
 
@@ -74,24 +94,6 @@ export default class DankTable extends React.PureComponent<Props, State> {
     this.forceUpdate()
   }
 
-  updateColumns() {
-    const columns = [] as DankTableColumnProps[]
-
-    React.Children.forEach(this.props.children, child => {
-      if (typeof child === "object") {
-        const childAsElem = child as React.ReactElement<any>
-
-        if (typeof childAsElem.type === "function") {
-          columns.push(Object.assign({}, childAsElem.props))
-        }
-      }
-    })
-
-    this.columns = columns
-
-    return columns
-  }
-
   handleRowContextMenu = (row: any, event: React.MouseEvent) => {
     if (this.props.onRowContextMenu) {
       this.props.onRowContextMenu(row, event)
@@ -102,17 +104,13 @@ export default class DankTable extends React.PureComponent<Props, State> {
     const { style, caption } = this.props
     const data = this.getVisibleData()
 
-    if (this.columns.length === 0) {
-      this.updateColumns()
-    }
-
     return (
       <div>
         <table className="responsive-table striped" style={style}>
           {caption && <caption>{caption}</caption>}
           <thead className={`${this.props.keepHeadOnMobile ? "keep-on-mobile" : ""}`}>
             <tr>
-              {this.columns.map(col => (
+              {this.state.columns.map(col => (
                 <th key={col.name} style={{ flex: col.flex, cursor: "pointer", whiteSpace: "nowrap" }} onClick={() => this.onColTitleClick(col)}>
                   <span>{col.title || col.name}</span>
                   {col.sortDir === 1 && (<i className="icon icon-arrow-up" style={{ marginLeft: 5 }} />)}
@@ -121,7 +119,7 @@ export default class DankTable extends React.PureComponent<Props, State> {
               ))}
             </tr>
             <tr>
-              {this.getFilterRowVisibility() && this.columns.map(col =>
+              {this.getFilterRowVisibility() && this.state.columns.map(col =>
                 <th key={col.name} style={{ flex: col.flex }}>
                   {this.getRenderedColFilter(col)}
                 </th>
@@ -131,7 +129,7 @@ export default class DankTable extends React.PureComponent<Props, State> {
           <tbody>
             {data.map((row, idx) => (
               <tr key={idx} onContextMenu={ev => this.handleRowContextMenu(row, ev)}>
-                {this.columns.map(col => (
+                {this.state.columns.map(col => (
                   <td key={col.name} style={{ flex: col.flex }} data-label={col.name}>{this.getRenderedCell(row, col)}</td>
                 ))}
               </tr>
@@ -167,7 +165,7 @@ export default class DankTable extends React.PureComponent<Props, State> {
   getSortedData() {
     const data = this.getFilteredData()
 
-    for (const col of this.columns) {
+    for (const col of this.state.columns) {
       if (col.sortDir) {
         if (col.onSort) {
           return data.sort((a, b) => {
@@ -189,7 +187,7 @@ export default class DankTable extends React.PureComponent<Props, State> {
 
   getFilteredData() {
     return this.getData().filter(row => {
-      for (const col of this.columns) {
+      for (const col of this.state.columns) {
         if (col.filterStr) {
           const cell = this.getStringifiedCell(row, col).toLowerCase()
           const filter = col.filterStr.toLowerCase()
@@ -205,7 +203,7 @@ export default class DankTable extends React.PureComponent<Props, State> {
   }
 
   getData() {
-    for (const col of this.columns) {
+    for (const col of this.state.columns) {
       if (col.filter === "select") {
         col.filterOptions = [""]
 
@@ -245,7 +243,7 @@ export default class DankTable extends React.PureComponent<Props, State> {
   }
 
   getFilterRowVisibility() {
-    for (const col of this.columns) {
+    for (const col of this.state.columns) {
       if (col.filter) {
         return true
       }
