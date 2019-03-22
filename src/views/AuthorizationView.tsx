@@ -67,7 +67,7 @@ export default class AuthorizationView extends React.PureComponent<Props, State>
   render() {
     return (
       <div>
-        <h2>Authorization</h2>
+        <h3 className="s-title">Authorization</h3>
         <div className="columns">
           <Formik<AuthData>
             enableReinitialize

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { HashRouter, Switch, Route, Redirect, RouteProps } from "react-router-dom";
+import { HashRouter, Switch, Route } from "react-router-dom";
 import SpectreSuspense from "./components/spectre/SpectreSuspense";
 import AppNavItemLink from "./components/AppNavItemLink";
 import AppNavItemList from "./components/AppNavItemList";
@@ -8,6 +8,7 @@ import SpectreModalContainer from "./components/spectre/SpectreModalContainer";
 import SpectreMenuContainer from "./components/spectre/SpectreMenuContainer";
 import { authorization, production, fontendDomain } from "./utils";
 import { observer } from "mobx-react";
+import { triviaBadges } from "./api/trivia.api";
 import "./register-service-worker";
 import "./App.scss";
 
@@ -22,25 +23,11 @@ const UsersIdView = React.lazy(() => import("./views/UsersIdView"))
 const ApiRefView = React.lazy(() => import("./views/ApiRefView"))
 const AuthorizationView = React.lazy(() => import("./views/AuthorizationView"))
 
-// function routeOrRedirect(condition: boolean, node: React.ReactNode) {
-//   if (condition) {
-//     return node
-//   } else {
-//     return <Redirect to="/" />
-//   }
-// }
-
-// class ProtectedRoute extends React.Component<{ component: any, perms: string[] } & RouteProps> {
-//   render() {
-//     const { component, perms, ...props } = this.props
-
-//     console.log(perms, authorization.hasPermission(...perms))
-
-//     return (
-//       <Route {...props} component={authorization.hasPermission(...perms) ? component : () => (<Redirect to="/" />)} />
-//     )
-//   }
-// }
+authorization.onLogin.add(() => {
+  if (authorization.hasPermission("trivia")) {
+    triviaBadges.load()
+  }
+})
 
 interface Props { }
 
@@ -104,9 +91,9 @@ export default class App extends React.Component<Props, State> {
                   <AppNavItemLink to="/trivia/questions">Questions</AppNavItemLink>
                   {authorization.hasPermission("trivia") && (
                     <React.Fragment>
-                      <AppNavItemLink to="/trivia/reports">Reports</AppNavItemLink>
-                      <AppNavItemLink to="/trivia/reported-questions">Reported Questions</AppNavItemLink>
-                      <AppNavItemLink to="/trivia/questions?verified=false">Unverified Questions</AppNavItemLink>
+                      <AppNavItemLink to="/trivia/reports" className="badge" data-badge={triviaBadges.reportCount}>Reports</AppNavItemLink>
+                      <AppNavItemLink to="/trivia/reported-questions" className="badge" data-badge={triviaBadges.reportedQuestionCount}>Reported Questions</AppNavItemLink>
+                      <AppNavItemLink to="/trivia/questions?verified=false" className="badge" data-badge={triviaBadges.unverifiedQuestionCount}>Unverified Questions</AppNavItemLink>
                     </React.Fragment>
                   )}
                 </AppNavItemList>

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router";
 import { Formik, FormikActions } from "formik";
-import { QuestionData, triviaApi, QuestionReportData } from "../api/trivia.api";
+import { QuestionData, triviaApi, QuestionReportData, triviaBadges } from "../api/trivia.api";
 import { loading, authorization } from "../utils";
 import { toaster } from "../components/spectre/SpectreToastContainer";
 import * as idbKeyval from "idb-keyval";
@@ -176,6 +176,7 @@ export default class TriviaQuestionsIdView extends React.PureComponent<Props, St
 
     if (accepted) {
       await triviaApi.questions.id(this.id).delete()
+      triviaBadges.load()
       this.props.history.push("/trivia/questions")
     }
   }
@@ -188,6 +189,7 @@ export default class TriviaQuestionsIdView extends React.PureComponent<Props, St
 
       await triviaApi.questions.id(this.id).put(this.state.data)
       await this.load()
+      triviaBadges.load()
     }
   }
 

@@ -16,13 +16,15 @@ export const api = Axios.create({
   },
 })
 
-class Authorization {
+export class Authorization {
   static storageKey = "AuthResult"
 
   @observable
   token?: string
   @observable
   user?: UserData
+
+  onLogin = new Set<() => any>()
 
   constructor() {
     const auth = localStorage.getItem(Authorization.storageKey)
@@ -70,6 +72,10 @@ class Authorization {
     this.updateApiToken(this.token)
 
     localStorage.setItem(Authorization.storageKey, JSON.stringify(auth))
+
+    setTimeout(() => {
+      this.onLogin.forEach(fn => fn())
+    })
   }
 
   logout() {

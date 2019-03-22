@@ -40,6 +40,7 @@ export default class TriviaStatisticsView extends React.PureComponent<Props, Sta
       <div>
         <h3 className="s-title">Trivia Statistics</h3>
         <p>Questions: {this.state.statistics.questionCount || 0}</p>
+        <p>Verified questions: {this.state.statistics.verifiedQuestionCount || 0}</p>
         <p>Categories: {this.state.statistics.categoryCount || 0}</p>
         <ActivityCalendar breakpoints={this.breakpoints} activities={this.activities} />
         <div className="columns">

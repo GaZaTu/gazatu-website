@@ -1,6 +1,6 @@
 import * as React from "react";
 import DankTable, { DankTableColumn, tableRenderDate, tableSortDate } from "../components/DankTable";
-import { QuestionData, triviaApi } from "../api/trivia.api";
+import { QuestionData, triviaApi, triviaBadges } from "../api/trivia.api";
 import { RouteComponentProps } from "react-router";
 import { toaster } from "../components/spectre/SpectreToastContainer";
 import SpectreIcon from "../components/spectre/SpectreIcon";
@@ -87,6 +87,7 @@ export default class TriviaQuestionsView extends React.PureComponent<Props, Stat
       if (await showConfirmation("Verify?")) {
         await triviaApi.questions.id(row._id).put({ verified: true })
         await this.load()
+        triviaBadges.load()
       }
 
       menu.hide()
@@ -96,6 +97,7 @@ export default class TriviaQuestionsView extends React.PureComponent<Props, Stat
       if (await showConfirmation("Delete?")) {
         await triviaApi.questions.id(row._id).delete()
         await this.load()
+        triviaBadges.load()
       }
 
       menu.hide()

@@ -1,13 +1,23 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import * as classNames from "classnames";
 
-export default class AppNavItemLink extends React.Component<{ to: string }> {
+interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLLIElement>, HTMLLIElement> {
+  children?: React.ReactNode
+  to: string
+}
+
+export default class AppNavItemLink extends React.Component<Props> {
   render() {
-    const active = (location.hash.substr(1) === this.props.to)
+    const { children, to, ...nativeProps } = this.props
+    const className = classNames({
+      "nav-item": true,
+      "active": location.hash.substr(1) === to,
+    }, nativeProps.className)
 
     return (
-      <li className={`nav-item ${active && "active"}`}>
-        <Link to={this.props.to}>{this.props.children}</Link>
+      <li {...nativeProps} className={className}>
+        <Link to={to}>{children}</Link>
       </li>
     )
   }

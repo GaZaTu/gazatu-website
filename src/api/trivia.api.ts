@@ -1,4 +1,5 @@
-import { ApiEndpointGroup, api } from "../utils";
+import { ApiEndpointGroup, api, loading } from "../utils";
+import { observable } from "mobx";
 
 export interface QuestionData {
   _id: string
@@ -31,11 +32,31 @@ export interface ReportedQuestionData {
 
 export interface Statistics {
   questionCount: number
+  verifiedQuestionCount: number
   categoryCount: number
   topCategories: { category: string, submissions: number }[]
   topSubmitters: { submitter: string, submissions: number }[]
   submissionDates: { createdAt: number }[]
 }
+
+export class TriviaBadges {
+  @observable
+  reportCount = 0
+  @observable
+  reportedQuestionCount = 0
+  @observable
+  unverifiedQuestionCount = 0
+
+  load() {
+    return Promise.all([
+      triviaApi.reportCount().then(res => this.reportCount = res),
+      triviaApi.reportedQuestionCount().then(res => this.reportedQuestionCount = res),
+      triviaApi.questionCount({ verified: false }).then(res => this.unverifiedQuestionCount = res),
+    ])
+  }
+}
+
+export const triviaBadges = new TriviaBadges()
 
 export const triviaApi = {
   questions: new ApiEndpointGroup<QuestionData>("/trivia/questions"),
@@ -45,6 +66,9 @@ export const triviaApi = {
   reportedQuestions: () => api.get("/trivia/reported-questions").then(res => res.data as ReportedQuestionData[]),
   categories: () => api.get("/trivia/categories").then(res => res.data as string[]),
   statistics: () => api.get("/trivia/statistics").then(res => res.data as Statistics),
+  reportCount: () => api.get("/trivia/report-count").then(res => res.data.count as number),
+  reportedQuestionCount: () => api.get("/trivia/reported-question-count").then(res => res.data.count as number),
+  questionCount: (params?: any) => api.get("/trivia/question-count", { params }).then(res => res.data.count as number),
   emptyQuestion: () => ({
     category: "",
     question: "",

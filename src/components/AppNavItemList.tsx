@@ -1,9 +1,11 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import * as classNames from "classnames";
 import AppNavItemLink from "./AppNavItemLink";
 import { reactNodeIsComponent } from "../utils";
 
-interface Props {
+interface Props extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLLIElement>, HTMLLIElement> {
+  children?: React.ReactNode
   title: string,
   titleTo?: string,
   matchStartsWith?: string,
@@ -11,13 +13,17 @@ interface Props {
 
 export default class AppNavItemList extends React.Component<Props> {
   render() {
-    const active = (location.hash.substr(1) === this.props.titleTo) || this.isActive()
+    const { children, title, titleTo, matchStartsWith, ...nativeProps } = this.props
+    const className = classNames({
+      "nav-item": true,
+      "active": (location.hash.substr(1) === titleTo) || this.isActive(),
+    }, nativeProps.className)
 
     return (
-      <li className={`nav-item ${active && "active"}`}>
-        {this.props.titleTo ? (<Link to={this.props.titleTo}>{this.props.title}</Link>) : (<a style={{ pointerEvents: "none" }}>{this.props.title}</a>)}
+      <li {...nativeProps} className={className}>
+        {titleTo ? (<Link to={titleTo}>{title}</Link>) : (<a style={{ pointerEvents: "none" }}>{title}</a>)}
         <ul className="nav">
-          {this.props.children}
+          {children}
         </ul>
       </li>
     )
