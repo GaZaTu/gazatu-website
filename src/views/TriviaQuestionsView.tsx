@@ -114,11 +114,20 @@ export default class TriviaQuestionsView extends React.PureComponent<Props, Stat
   }
 
   render() {
+    const columns = triviaQuestionsDankTableColumns()
+
+    if (this.query.verified === "false") {
+      columns.push(
+        <DankTableColumn key={11} name="answer" filter="input">
+        </DankTableColumn>
+      )
+    }
+
     return (
       <div style={{ padding: 0 }}>
         <h3 className="s-title">Questions</h3>
         <DankTable data={this.state.data} style={{ maxHeight: "unset", overflow: "unset" }} keepHeadOnMobile onRowContextMenu={this.handleRowContextMenu}>
-          {triviaQuestionsDankTableColumns()}
+          {columns}
         </DankTable>
       </div>
     )
