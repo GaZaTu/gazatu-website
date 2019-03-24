@@ -48,7 +48,7 @@ export default class DankTable extends React.PureComponent<Props, State> {
     }
   }
 
-  static getColumnsFromChildren(props: Props) {
+  static getColumnsFromChildren(props: Props, prevColumns = [] as DankTableColumnProps[]) {
     const columns = [] as DankTableColumnProps[]
 
     React.Children.forEach(props.children, child => {
@@ -56,7 +56,7 @@ export default class DankTable extends React.PureComponent<Props, State> {
         const childAsElem = child as React.ReactElement<any>
 
         if (typeof childAsElem.type === "function") {
-          columns.push(Object.assign({}, childAsElem.props))
+          columns.push(Object.assign({}, prevColumns.find(p => p.name === childAsElem.props.name), childAsElem.props))
         }
       }
     })
@@ -66,7 +66,7 @@ export default class DankTable extends React.PureComponent<Props, State> {
 
   static getDerivedStateFromProps(props: Props, prevState: State): Partial<State> | null {
     return {
-      columns: DankTable.getColumnsFromChildren(props),
+      columns: DankTable.getColumnsFromChildren(props, prevState.columns),
     }
   }
 
