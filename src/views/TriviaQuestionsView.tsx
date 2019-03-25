@@ -128,7 +128,7 @@ export default class TriviaQuestionsView extends React.PureComponent<Props, Stat
     return (
       <div style={{ padding: 0 }}>
         <h3 className="s-title">Questions</h3>
-        <DankTable data={this.state.data} style={{ maxHeight: "unset", overflow: "unset" }} keepHeadOnMobile onRowContextMenu={this.handleRowContextMenu}>
+        <DankTable data={this.state.data} style={{ maxHeight: "unset", overflow: "unset" }} keepHeadOnMobile onRowContextMenu={this.handleRowContextMenu} hotkeys>
           {columns}
         </DankTable>
       </div>

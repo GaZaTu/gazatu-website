@@ -1,4 +1,5 @@
 import * as React from "react";
+import { subscribe, hotkey } from "../../utils";
 // import { hotkey, subscribe } from "../../utils";
 
 function range(start: number, end: number) {
@@ -48,7 +49,7 @@ export default class SpectrePagination extends React.PureComponent<Props> {
     const pageCount = this.props.pageCount
     const pageNumber = this.props.page + 1
 
-    if (i === pageNumber || (i > pageNumber - 2 && i < pageNumber) || (i > pageNumber && i < pageNumber + 2) || i === 1 || i === pageCount) {
+    if (i === pageNumber || (i > pageNumber - 3 && i < pageNumber) || (i > pageNumber && i < pageNumber + 3) || i === 1 || i === pageCount) {
       return this.renderItem(i, i, i - 1, i === pageNumber, false)
     } else if ((i < pageNumber && !state.addedLeftFiller) || (i > pageNumber && !state.addedRightFiller)) {
       state.addedLeftFiller = (i < pageNumber)
@@ -72,17 +73,17 @@ export default class SpectrePagination extends React.PureComponent<Props> {
     )
   }
 
-  // @subscribe(() => hotkey("ArrowLeft"))
-  // onArrowLeft() {
-  //   if (this.props.page > 0) {
-  //     this.props.onChange(this.props.page - 1)
-  //   }
-  // }
+  @subscribe(() => hotkey("ArrowLeft"))
+  onArrowLeft() {
+    if (this.props.hotkeys && this.props.page > 0) {
+      this.props.onChange(this.props.page - 1)
+    }
+  }
 
-  // @subscribe(() => hotkey("ArrowRight"))
-  // onArrowRight() {
-  //   if ((this.props.page + 1) < this.props.pageCount) {
-  //     this.props.onChange(this.props.page + 1)
-  //   }
-  // }
+  @subscribe(() => hotkey("ArrowRight"))
+  onArrowRight() {
+    if (this.props.hotkeys && (this.props.page + 1) < this.props.pageCount) {
+      this.props.onChange(this.props.page + 1)
+    }
+  }
 }

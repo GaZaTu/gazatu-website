@@ -8,7 +8,7 @@ export const fontendDomain = "gazatu.xyz"
 export const backendDomain = "api.gazatu.xyz"
 
 export const api = Axios.create({
-  baseURL: production ? `https://${backendDomain}` : "http://localhost:8088",
+  baseURL: !production ? `https://${backendDomain}` : "http://localhost:8088",
   headers: {
     post: {
       "Content-Type": "application/json",

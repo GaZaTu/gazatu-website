@@ -222,6 +222,14 @@ export default class DankTable extends React.PureComponent<Props, State> {
 
   updatePageCount(data: any[]) {
     this.pageCount = Math.ceil(data.length / this.pageSize)
+
+    setTimeout(() => {
+      if (this.state.page > this.pageCount) {
+        this.setState({
+          page: this.pageCount - 1,
+        })
+      }
+    })
   }
 
   getStringifiedCell(row: any, col: DankTableColumnProps) {
