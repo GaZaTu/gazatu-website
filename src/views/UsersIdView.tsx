@@ -175,7 +175,7 @@ export default class UsersIdView extends React.PureComponent<Props, State> {
         </Formik>
 
         <label className="form-label">Permissions</label>
-        <SpectreAutoComplete options={this.state.permissions} tags={this.state.userPermissions} onTagsChange={this.handlePermissionsChange} readOnly={!this.state.hasUsersPermission} />
+        <SpectreAutoComplete options={this.state.permissions} tags={this.state.userPermissions} onTagsChange={this.handlePermissionsChange} readOnly={!this.state.hasUsersPermission} canAddNewTags />
       </div>
     )
   }

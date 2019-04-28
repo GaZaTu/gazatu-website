@@ -243,7 +243,7 @@ export default class TriviaQuestionsIdView extends React.PureComponent<Props, St
                   </SpectreFormikButton>
                 )}
 
-                <SpectreFormikButton formik={form} type="button" loading={this.state.loading} disabled={this.isNew || this.state.data.verified} onClick={this.handleReport}>
+                <SpectreFormikButton formik={form} type="button" loading={this.state.loading} disabled={this.isNew} onClick={this.handleReport}>
                   <SpectreIcon icon="flag" />
                 </SpectreFormikButton>
 
